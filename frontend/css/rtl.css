@@ -1,0 +1,492 @@
+/* ==================== RTL STYLES FOR ARABIC ==================== */
+/* Professional RTL layout using logical properties */
+
+/* Import Arabic Font */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+
+/* Apply Arabic Font */
+body.rtl,
+[lang="ar"] {
+    font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Maintain English fonts for specific elements */
+body.rtl .brand-name,
+body.rtl .logo,
+[lang="ar"] .brand-name,
+[lang="ar"] .logo {
+    font-family: 'Playfair Display', serif;
+}
+
+/* ==================== LAYOUT & DIRECTION ==================== */
+
+/* Text Alignment */
+body.rtl {
+    text-align: right;
+    direction: rtl;
+}
+
+/* Flex Direction Reversal */
+body.rtl .navbar,
+body.rtl .nav-links,
+body.rtl .breadcrumbs,
+body.rtl .pagination,
+body.rtl .action-buttons {
+    flex-direction: row-reverse;
+}
+
+/* Grid - Keep as is (cards should not flip) */
+body.rtl .auction-grid,
+body.rtl .lot-grid,
+body.rtl .card-grid {
+    direction: ltr;
+    /* Keep grid LTR */
+}
+
+body.rtl .auction-grid>*,
+body.rtl .lot-grid>*,
+body.rtl .card-grid>* {
+    direction: rtl;
+    /* But content inside is RTL */
+}
+
+/* ==================== SPACING & MARGINS ==================== */
+
+/* Use logical properties for margins and padding */
+body.rtl .ml-auto {
+    margin-inline-start: auto;
+    margin-inline-end: 0;
+}
+
+body.rtl .mr-auto {
+    margin-inline-end: auto;
+    margin-inline-start: 0;
+}
+
+/* Form Elements */
+body.rtl input,
+body.rtl textarea,
+body.rtl select {
+    text-align: right;
+}
+
+body.rtl input[type="number"] {
+    text-align: left;
+    /* Keep numbers LTR */
+}
+
+/* Labels */
+body.rtl label {
+    text-align: right;
+}
+
+/* ==================== NAVIGATION ==================== */
+
+body.rtl .nav-item:not(:last-child) {
+    margin-inline-end: 2rem;
+    margin-inline-start: 0;
+}
+
+body.rtl .dropdown-menu {
+    right: auto;
+    left: 0;
+}
+
+/* Mobile Menu */
+body.rtl .mobile-menu {
+    right: auto;
+    left: 0;
+}
+
+/* ==================== BUTTONS & ICONS ==================== */
+
+/* Icon positioning */
+body.rtl .btn-icon-left {
+    margin-inline-end: 0.5rem;
+    margin-inline-start: 0;
+}
+
+body.rtl .btn-icon-right {
+    margin-inline-start: 0.5rem;
+    margin-inline-end: 0;
+}
+
+/* Chevrons and Arrows - Flip */
+body.rtl .icon-chevron-right::before {
+    content: '\2039';
+    /* Left chevron */
+}
+
+body.rtl .icon-chevron-left::before {
+    content: '\203A';
+    /* Right chevron */
+}
+
+body.rtl .icon-arrow-right {
+    transform: scaleX(-1);
+}
+
+body.rtl .icon-arrow-left {
+    transform: scaleX(-1);
+}
+
+/* ==================== CARDS & COMPONENTS ==================== */
+
+/* Auction Cards */
+body.rtl .auction-card,
+body.rtl .lot-card {
+    text-align: right;
+}
+
+body.rtl .card-badge {
+    right: auto;
+    left: 1rem;
+}
+
+body.rtl .card-actions {
+    justify-content: flex-start;
+}
+
+/* ==================== FORMS ==================== */
+
+/* Form Groups */
+body.rtl .form-group {
+    text-align: right;
+}
+
+/* Checkboxes and Radio Buttons */
+body.rtl input[type="checkbox"],
+body.rtl input[type="radio"] {
+    margin-inline-end: 0.5rem;
+    margin-inline-start: 0;
+}
+
+/* Form Validation Icons */
+body.rtl .form-input-icon {
+    right: auto;
+    left: 1rem;
+}
+
+/* ==================== TABLES ==================== */
+
+body.rtl table {
+    direction: rtl;
+}
+
+body.rtl th,
+body.rtl td {
+    text-align: right;
+}
+
+body.rtl th:first-child,
+body.rtl td:first-child {
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+body.rtl th:last-child,
+body.rtl td:last-child {
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* ==================== MODALS & DIALOGS ==================== */
+
+body.rtl .modal-header {
+    text-align: right;
+}
+
+body.rtl .modal-close {
+    right: auto;
+    left: 1.5rem;
+}
+
+/* ==================== BREADCRUMBS ==================== */
+
+body.rtl .breadcrumb {
+    flex-direction: row-reverse;
+}
+
+body.rtl .breadcrumb-separator::before {
+    content: '\2039';
+    /* Left chevron for RTL */
+}
+
+/* ==================== COUNTDOWN TIMER ==================== */
+
+body.rtl .countdown {
+    direction: ltr;
+    /* Keep numbers LTR */
+    text-align: center;
+}
+
+body.rtl .countdown-label {
+    direction: rtl;
+    /* But labels RTL */
+}
+
+/* ==================== BID HISTORY ==================== */
+
+body.rtl .bid-item {
+    text-align: right;
+}
+
+body.rtl .bid-amount {
+    direction: ltr;
+    /* Keep currency LTR */
+}
+
+/* ==================== GALLERY & MEDIA ==================== */
+
+/* Thumbnail Navigation */
+body.rtl .gallery-nav-prev {
+    right: auto;
+    left: 1rem;
+}
+
+body.rtl .gallery-nav-next {
+    left: auto;
+    right: 1rem;
+}
+
+/* Media Grid */
+body.rtl .media-grid {
+    direction: ltr;
+    /* Keep media grid LTR */
+}
+
+/* ==================== ADMIN DASHBOARD ==================== */
+
+/* Sidebar */
+body.rtl .admin-sidebar {
+    right: 0;
+    left: auto;
+    border-right: none;
+    border-left: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+body.rtl .admin-main {
+    margin-right: 260px;
+    margin-left: 0;
+}
+
+/* Sidebar Navigation Items */
+body.rtl .sidebar-nav .nav-item:hover {
+    transform: translateX(-4px);
+}
+
+/* Admin Tables */
+body.rtl .admin-table th:first-child {
+    border-radius: 0 0.5rem 0 0;
+}
+
+body.rtl .admin-table th:last-child {
+    border-radius: 0.5rem 0 0 0;
+}
+
+/* Action Buttons in Tables */
+body.rtl .table-actions {
+    text-align: left;
+    /* Keep actions on left in RTL */
+}
+
+/* ==================== FOOTER ==================== */
+
+body.rtl .footer-links {
+    text-align: right;
+}
+
+body.rtl .footer-social {
+    justify-content: flex-start;
+}
+
+/* ==================== TOOLTIPS & POPOVERS ==================== */
+
+body.rtl .tooltip {
+    direction: rtl;
+    text-align: right;
+}
+
+/* ==================== NUMBERS & CURRENCY ==================== */
+
+/* Keep all numbers and currency LTR */
+body.rtl .price,
+body.rtl .bid-amount,
+body.rtl .estimate,
+body.rtl .currency,
+body.rtl .number {
+    direction: ltr;
+    unicode-bidi: embed;
+}
+
+/* ==================== ANIMATIONS ==================== */
+
+/* Slide animations should reverse */
+@keyframes slideInRight-rtl {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInLeft-rtl {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+body.rtl .slide-in-right {
+    animation: slideInLeft-rtl 0.3s ease-out;
+}
+
+body.rtl .slide-in-left {
+    animation: slideInRight-rtl 0.3s ease-out;
+}
+
+/* ==================== SCROLLBAR ==================== */
+
+body.rtl ::-webkit-scrollbar {
+    left: 0;
+    right: auto;
+}
+
+/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
+
+@media (max-width: 768px) {
+    body.rtl .admin-sidebar {
+        right: -260px;
+        left: auto;
+    }
+
+    body.rtl .admin-sidebar.active {
+        right: 0;
+    }
+
+    body.rtl .admin-main {
+        margin-right: 0;
+    }
+
+    body.rtl .mobile-menu-toggle {
+        left: 1rem;
+        right: auto;
+    }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+/* Focus indicators */
+body.rtl *:focus {
+    outline-offset: 2px;
+}
+
+/* Screen reader text */
+body.rtl .sr-only-rtl {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ==================== PRINT STYLES ==================== */
+
+@media print {
+    body.rtl {
+        direction: rtl;
+    }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+
+/* Text alignment utilities for RTL */
+body.rtl .text-left {
+    text-align: right;
+}
+
+body.rtl .text-right {
+    text-align: left;
+}
+
+body.rtl .text-start {
+    text-align: right;
+}
+
+body.rtl .text-end {
+    text-align: left;
+}
+
+/* Float utilities */
+body.rtl .float-left {
+    float: right;
+}
+
+body.rtl .float-right {
+    float: left;
+}
+
+/* Margin utilities */
+body.rtl .ms-auto {
+    margin-inline-start: auto;
+}
+
+body.rtl .me-auto {
+    margin-inline-end: auto;
+}
+
+/* Padding utilities */
+body.rtl .ps-0 {
+    padding-inline-start: 0;
+}
+
+body.rtl .ps-1 {
+    padding-inline-start: 0.25rem;
+}
+
+body.rtl .ps-2 {
+    padding-inline-start: 0.5rem;
+}
+
+body.rtl .ps-3 {
+    padding-inline-start: 1rem;
+}
+
+body.rtl .ps-4 {
+    padding-inline-start: 1.5rem;
+}
+
+body.rtl .ps-5 {
+    padding-inline-start: 3rem;
+}
+
+body.rtl .pe-0 {
+    padding-inline-end: 0;
+}
+
+body.rtl .pe-1 {
+    padding-inline-end: 0.25rem;
+}
+
+body.rtl .pe-2 {
+    padding-inline-end: 0.5rem;
+}
+
+body.rtl .pe-3 {
+    padding-inline-end: 1rem;
+}
+
+body.rtl .pe-4 {
+    padding-inline-end: 1.5rem;
+}
+
+body.rtl .pe-5 {
+    padding-inline-end: 3rem;
+}

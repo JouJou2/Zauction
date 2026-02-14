@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description"
+    content="Page not found - Zauction">
+  <title>Page Not Found - Zauction</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/typography.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .error-section {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+    .error-code {
+      font-size: 8rem;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: var(--spacing-md);
+      color: var(--color-graphite);
+    }
+    .error-message {
+      font-size: var(--text-xl);
+      margin-bottom: var(--spacing-lg);
+      color: var(--color-graphite);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <div id="site-header"></div>
+
+  <!-- Error Content -->
+  <section class="error-section">
+    <div class="container">
+      <h1 class="error-code">404</h1>
+      <p class="error-message">The page you are looking for does not exist.</p>
+      <a href="index.html" class="btn btn-primary">Return Home</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>About</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/about.html">About Zauction</a></li>
+            <li><a href="pages/info/team.html">Our Team</a></li>
+            <li><a href="pages/info/contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Bidding</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/how-bidding-works.html">How Bidding Works</a></li>
+            <li><a href="pages/info/buyers-guide.html">Buyer's Guide</a></li>
+            <li><a href="pages/info/condition-reports.html">Condition Reports</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Services</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/fees-payments.html">Fees & Payments</a></li>
+            <li><a href="pages/info/shipping-pickup.html">Shipping & Pickup</a></li>
+            <li><a href="pages/info/authentication.html">Authentication</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/terms.html">Terms of Service</a></li>
+            <li><a href="pages/info/privacy.html">Privacy Policy</a></li>
+            <li><a href="pages/info/cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Zauction. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script defer src="js/i18n.js"></script>
+    <script src="js/data.js"></script>
+  <script defer src="js/i18n.js"></script>
+    <script src="js/utils.js"></script>
+  <script defer src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

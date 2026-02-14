@@ -1,0 +1,118 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "phone_number": "96171800472",
+      "phone_verified": true,
+      "whatsapp_opt_in": true,
+      "created_at": "2026-02-13T23:33:55.914Z"
+    },
+    {
+      "id": 2,
+      "phone_number": "905370456979",
+      "phone_verified": true,
+      "whatsapp_opt_in": true,
+      "created_at": "2026-02-13T23:39:17.777Z"
+    }
+  ],
+  "otp_verifications": [
+    {
+      "id": 1,
+      "phone_number": "+96171800472",
+      "otp_code": "690353",
+      "expires_at": 1771024750390,
+      "verified": false,
+      "created_at": "2026-02-13T23:14:10.390Z"
+    },
+    {
+      "id": 2,
+      "phone_number": "905370456979",
+      "otp_code": "123456",
+      "expires_at": 1771024776783,
+      "verified": false,
+      "created_at": "2026-02-13T23:14:36.783Z"
+    },
+    {
+      "id": 3,
+      "phone_number": "905370456979",
+      "otp_code": "420689",
+      "expires_at": 1771025063800,
+      "verified": false,
+      "created_at": "2026-02-13T23:19:23.800Z"
+    },
+    {
+      "id": 4,
+      "phone_number": "96171800472",
+      "otp_code": "127515",
+      "expires_at": 1771025567623,
+      "verified": false,
+      "created_at": "2026-02-13T23:27:47.623Z"
+    },
+    {
+      "id": 5,
+      "phone_number": "96171800472",
+      "otp_code": "304255",
+      "expires_at": 1771025935557,
+      "verified": false,
+      "created_at": "2026-02-13T23:33:55.557Z"
+    },
+    {
+      "id": 6,
+      "phone_number": "905370456979",
+      "otp_code": "882072",
+      "expires_at": 1771026257229,
+      "verified": false,
+      "created_at": "2026-02-13T23:39:17.229Z"
+    }
+  ],
+  "notification_logs": [
+    {
+      "id": 1,
+      "phone_number": "96171800472",
+      "auction_id": "test-auction",
+      "notification_type": "whatsapp",
+      "status": "sent",
+      "sent_at": "2026-02-13T23:47:54.165Z"
+    },
+    {
+      "id": 2,
+      "phone_number": "905370456979",
+      "auction_id": "test-auction",
+      "notification_type": "whatsapp",
+      "status": "sent",
+      "sent_at": "2026-02-13T23:47:54.167Z"
+    },
+    {
+      "id": 3,
+      "phone_number": "96171800472",
+      "auction_id": "abb8f793-ca44-4c27-a7a7-68797900c63a",
+      "notification_type": "whatsapp",
+      "status": "sent",
+      "sent_at": "2026-02-13T23:48:05.840Z"
+    },
+    {
+      "id": 4,
+      "phone_number": "905370456979",
+      "auction_id": "abb8f793-ca44-4c27-a7a7-68797900c63a",
+      "notification_type": "whatsapp",
+      "status": "sent",
+      "sent_at": "2026-02-13T23:48:05.842Z"
+    },
+    {
+      "id": 5,
+      "phone_number": "96171800472",
+      "auction_id": "bc753946-35c7-4161-bdb1-fdd0e93c0dd4",
+      "notification_type": "whatsapp",
+      "status": "sent",
+      "sent_at": "2026-02-13T23:55:06.679Z"
+    },
+    {
+      "id": 6,
+      "phone_number": "905370456979",
+      "auction_id": "bc753946-35c7-4161-bdb1-fdd0e93c0dd4",
+      "notification_type": "whatsapp",
+      "status": "sent",
+      "sent_at": "2026-02-13T23:55:06.680Z"
+    }
+  ]
+}

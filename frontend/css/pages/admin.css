@@ -1,0 +1,35 @@
+/* ============================================
+   ZAUCTION - ADMIN PAGE STYLES
+   Clean, functional admin interface
+   ============================================ */
+
+.admin-tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-8);
+    border-bottom: var(--border-thin) solid var(--color-border);
+}
+
+.admin-section {
+    background-color: var(--color-white);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-8);
+    margin-bottom: var(--space-8);
+}
+
+.admin-form {
+    max-width: 900px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+}
+
+@media (max-width: 639px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}

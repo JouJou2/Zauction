@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="View all lots in this auction">
+    <title id="page-title">Auction - Zauction</title>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages/auction.css">
+    <link rel="stylesheet" href="../css/rtl.css">
+    <link rel="stylesheet" href="../css/components/lang-toggle.css">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="section">
+        <div class="container">
+            <!-- Auction Header -->
+            <div class="auction-header" id="auction-header">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Sort Controls -->
+            <div class="auction-toolbar">
+                <span class="text-sm text-muted" id="lot-count">Loading...</span>
+                <select class="form-select" id="sort-select" style="width: auto;">
+                    <option value="lotNumber">Lot Number</option>
+                    <option value="endingSoon">Ending Soon</option>
+                    <option value="currentBid">Current Bid</option>
+                </select>
+            </div>
+
+            <!-- Lots Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg" id="lots-grid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Zauction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/countdown.js"></script>
+    <script src="../js/watchlist.js"></script>
+    <script>
+        const auctionId = getUrlParameter('id');
+        let currentSort = 'lotNumber';
+
+        // Track auction view for featured section
+        function trackAuctionView(auctionId) {
+            const recentAuctions = JSON.parse(localStorage.getItem('recentAuctions') || '[]');
+            
+            // Remove if already exists (to update position)
+            const filtered = recentAuctions.filter(id => id !== auctionId);
+            
+            // Add to beginning
+            filtered.unshift(auctionId);
+            
+            // Keep only last 5
+            const updated = filtered.slice(0, 5);
+            
+            localStorage.setItem('recentAuctions', JSON.stringify(updated));
+        }
+
+        async function loadAuction() {
+            try {
+                const { auction } = await auctionsAPI.getById(auctionId);
+                
+                if (!auction) {
+                    window.location.href = 'auctions.html';
+                    return;
+                }
+
+                // Track this auction view
+                trackAuctionView(auctionId);
+
+                document.getElementById('page-title').textContent = auction.title + ' - Zauction';
+
+                const header = document.getElementById('auction-header');
+                header.innerHTML = 
+                    '<h1>' + auction.title + '</h1>' +
+                    '<p class="auction-meta">' +
+                        '<span class="label">' + (auction.category || 'Auction') + '</span>' +
+                        '<span>•</span>' +
+                        '<span>' + (auction.location || 'TBA') + '</span>' +
+                        '<span>•</span>' +
+                        '<span>' + (auction.lot_count || 0) + ' lots</span>' +
+                    '</p>' +
+                    '<p class="auction-description">' + (auction.description || '') + '</p>' +
+                    '<div class="auction-dates">' +
+                        '<div>' +
+                            '<span class="text-sm text-muted">Starts:</span>' +
+                            '<span class="text-sm font-medium">' + formatDateTime(auction.start_date) + '</span>' +
+                        '</div>' +
+                        '<div>' +
+                            '<span class="text-sm text-muted">Ends:</span>' +
+                            '<span class="text-sm font-medium">' + formatDateTime(auction.end_date) + '</span>' +
+                        '</div>' +
+                    '</div>';
+
+                await loadLots();
+            } catch (error) {
+                console.error('Failed to load auction:', error);
+                alert('Failed to load auction');
+                window.location.href = 'auctions.html';
+            }
+        }
+
+        async function loadLots() {
+            try {
+                const { lots } = await auctionsAPI.getLots(auctionId);
+
+                if (currentSort === 'lotNumber') {
+                    lots.sort((a, b) => a.lot_number - b.lot_number);
+                } else if (currentSort === 'endingSoon') {
+                    lots.sort((a, b) => new Date(a.end_date) - new Date(b.end_date));
+                } else if (currentSort === 'currentBid') {
+                    lots.sort((a, b) => (b.current_bid || 0) - (a.current_bid || 0));
+                }
+
+                document.getElementById('lot-count').textContent = lots.length + ' lot' + (lots.length !== 1 ? 's' : '');
+
+                const container = document.getElementById('lots-grid');
+                
+                if (lots.length === 0) {
+                    container.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">No lots in this auction yet</p>';
+                    return;
+                }
+
+                container.innerHTML = lots.map(lot => {
+                    const imageUrl = lot.primary_image || lot.image_data || '../assets/images/placeholder.png';
+                    const currentBid = lot.current_bid && lot.current_bid > 0;
+                    
+                    return '<a href="lot.html?id=' + lot.id + '" class="card">' +
+                        '<img src="' + imageUrl + '" alt="' + lot.title + '" class="card-image">' +
+                        '<div class="card-content">' +
+                            '<div class="label mb-2">Lot ' + lot.lot_number + '</div>' +
+                            '<h4 class="card-title" style="font-size: var(--text-lg);">' + lot.title + '</h4>' +
+                            '<p class="price mt-4">' + (currentBid ? formatCurrency(lot.current_bid) : formatCurrency(lot.starting_bid)) + '</p>' +
+                            '<p class="estimate">' + (currentBid ? 'Current Bid' : 'Starting Bid') + '</p>' +
+                        '</div>' +
+                        '<div class="card-footer">' +
+                            '<span class="text-xs" data-countdown="' + lot.end_date + '" data-compact></span>' +
+                            (isEndingSoon(lot.end_date) ? '<span class="badge badge-gold">Ending Soon</span>' : '') +
+                        '</div>' +
+                    '</a>';
+                }).join('');
+
+                initCountdowns();
+            } catch (error) {
+                console.error('Failed to load lots:', error);
+                container.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">Failed to load lots</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!auctionId) {
+                window.location.href = 'auctions.html';
+                return;
+            }
+
+            loadAuction();
+
+            document.getElementById('sort-select').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                loadLots();
+            });
+        });
+    </script>
+</body>
+
+</html>

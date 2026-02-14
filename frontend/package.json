@@ -1,0 +1,21 @@
+{
+  "name": "zauction",
+  "version": "1.0.0",
+  "description": "Premium timed auction website",
+  "scripts": {
+    "dev": "live-server --port=8000 --open=/ --watch=**/*.html,**/*.css,**/*.js",
+    "start": "python -m http.server 8000",
+    "build": "echo 'No build step required for static site' && exit 0"
+  },
+  "keywords": [
+    "auction",
+    "premium",
+    "static"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "intl-tel-input": "^24.6.0",
+    "live-server": "^1.2.2"
+  }
+}

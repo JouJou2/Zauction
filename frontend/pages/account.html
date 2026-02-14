@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Zauction</title>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages/account.css">
+    <link rel="stylesheet" href="../css/rtl.css">
+    <link rel="stylesheet" href="../css/components/lang-toggle.css">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="section">
+        <div class="container">
+            <h1 class="mb-8" data-i18n="account.title">My Account</h1>
+
+            <div class="account-tabs">
+                <button class="tab-btn active" data-tab="watchlist" data-i18n="account.watchlist">Watchlist</button>
+                <button class="tab-btn" data-tab="bids" data-i18n="account.biddingHistory">Bidding History</button>
+                <button class="tab-btn" data-tab="profile" data-i18n="account.profile">Profile</button>
+            </div>
+
+            <!-- Watchlist Tab -->
+            <div class="tab-content active" id="watchlist-tab">
+                <h2 class="mb-6" data-i18n="account.watchlist">Watchlist</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg" id="watchlist-grid">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Bids Tab -->
+            <div class="tab-content" id="bids-tab">
+                <h2 class="mb-6" data-i18n="account.biddingHistory">Bidding History</h2>
+                
+                <!-- Filter buttons -->
+                <div class="mb-6" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-sm btn-secondary active" data-filter="all" data-i18n="account.allBids">All Bids</button>
+                    <button class="btn btn-sm btn-secondary" data-filter="active" data-i18n="account.active">Active</button>
+                    <button class="btn btn-sm btn-secondary" data-filter="winning" data-i18n="account.winning">Winning</button>
+                    <button class="btn btn-sm btn-secondary" data-filter="outbid" data-i18n="account.outbid">Outbid</button>
+                    <button class="btn btn-sm btn-secondary" data-filter="won" data-i18n="account.won">Won</button>
+                    <button class="btn btn-sm btn-secondary" data-filter="lost" data-i18n="account.lost">Lost</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" id="bids-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="auction.lot">Lot</th>
+                                <th data-i18n="nav.auctions">Auction</th>
+                                <th data-i18n="account.yourBid">Your Bid</th>
+                                <th data-i18n="auction.currentBid">Current Bid</th>
+                                <th data-i18n="admin.status">Status</th>
+                                <th data-i18n="common.date">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="tab-content" id="profile-tab">
+                <h2 class="mb-6" data-i18n="account.profileInfo">Profile Information</h2>
+                <div class="profile-info">
+                    <div class="info-row">
+                        <span class="label" data-i18n="account.name">Name:</span>
+                        <span id="profile-name"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label" data-i18n="forms.email">Email:</span>
+                        <span id="profile-email"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label" data-i18n="account.memberSince">Member Since:</span>
+                        <span id="profile-date"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p data-i18n="footer.copyright">&copy; 2026 Zauction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="../js/i18n.js"></script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/countdown.js"></script>
+    <script src="../js/watchlist.js"></script>
+    <script>
+        let user = null;
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.getAttribute('data-tab');
+
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                btn.classList.add('active');
+                document.getElementById(`${tab}-tab`).classList.add('active');
+
+                // Reload data when switching tabs
+                if (tab === 'bids' && user) {
+                    loadBids();
+                } else if (tab === 'watchlist' && user) {
+                    loadWatchlist();
+                }
+            });
+        });
+
+        // Load watchlist
+        async function loadWatchlist() {
+            if (!user) return;
+            
+            try {
+                const { watchlist } = await watchlistAPI.getAll();
+                const container = document.getElementById('watchlist-grid');
+
+                if (!watchlist || watchlist.length === 0) {
+                    container.innerHTML = '<p class="text-muted" data-i18n="account.noItemsWatchlist">No items in your watchlist</p>';
+                    return;
+                }
+
+                container.innerHTML = watchlist.map(item => {
+                    const lotId = item.lot_id;
+                    return `
+            <a href="lot.html?id=${lotId}" class="card">
+              <img src="${item.primary_image || '../assets/images/placeholder.png'}" alt="${item.title}" class="card-image">
+              <div class="card-content">
+                <div class="label mb-2">${i18n.t('auction.lot')} ${item.lot_number}</div>
+                <h4 class="card-title" style="font-size: var(--text-lg);">${item.title}</h4>
+                <p class="price mt-4">${item.current_bid && item.current_bid > 0 ? formatCurrency(item.current_bid) : formatCurrency(item.starting_bid)}</p>
+                <p class="estimate">${item.current_bid && item.current_bid > 0 ? i18n.t('account.currentBidLabel') : i18n.t('account.startingBidLabel')}</p>
+              </div>
+              <div class="card-footer">
+                <span class="text-xs" data-countdown="${item.auction_end_date}" data-compact></span>
+              </div>
+            </a>
+          `;
+                }).join('');
+
+                initCountdowns();
+                
+                // Reload cache after loading watchlist
+                if (window.loadWatchlistCache) {
+                    await window.loadWatchlistCache();
+                }
+            } catch (error) {
+                console.error('Failed to load watchlist:', error);
+                const container = document.getElementById('watchlist-grid');
+                container.innerHTML = '<p class="text-muted" data-i18n="account.failedLoadWatchlist">Failed to load watchlist</p>';
+                if (typeof i18n !== 'undefined' && i18n?.translatePage) {
+                    i18n.translatePage();
+                }
+            }
+        }
+
+        // Load bidding history
+        async function loadBids() {
+            if (!user) return;
+            
+            try {
+                const { bids } = await bidsAPI.getMyBids();
+                allBids = bids || [];
+                renderBids(allBids);
+            } catch (error) {
+                console.error('Failed to load bids:', error);
+                const tbody = document.querySelector('#bids-table tbody');
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted" data-i18n="account.failedLoadBids">Failed to load bids</td></tr>';
+            }
+        }
+
+        let allBids = [];
+        let currentFilter = 'all';
+
+        // Render bids based on current filter
+        function renderBids(bids) {
+            const tbody = document.querySelector('#bids-table tbody');
+
+            if (!bids || bids.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted" data-i18n="account.noBidsYet">No bids yet</td></tr>';
+                return;
+            }
+
+            // Filter bids based on current filter
+            let filteredBids = bids;
+            if (currentFilter !== 'all') {
+                filteredBids = bids.filter(bid => {
+                    const status = getBidStatus(bid);
+                    return status.toLowerCase() === currentFilter;
+                });
+            }
+
+            if (filteredBids.length === 0) {
+                const filterMap = {
+                    all: i18n.t('account.allBids').toLowerCase() + ' ',
+                    active: i18n.t('account.active').toLowerCase() + ' ',
+                    winning: i18n.t('account.winning').toLowerCase() + ' ',
+                    outbid: i18n.t('account.outbid').toLowerCase() + ' ',
+                    won: i18n.t('account.won').toLowerCase() + ' ',
+                    lost: i18n.t('account.lost').toLowerCase() + ' '
+                };
+                const filterText = currentFilter === 'all' ? '' : (filterMap[currentFilter] || '');
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">${i18n.t('account.noFilteredBids').replace('{filter}', filterText)}</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredBids.map(bid => {
+                const status = getBidStatus(bid);
+                const statusBadge = getStatusBadge(status);
+                const liveCurrentBid = Number(bid.current_bid || bid.starting_bid || 0);
+                
+                return `
+                    <tr>
+                        <td><a href="lot.html?id=${bid.lot_id}" class="text-gold">${bid.lot_title || i18n.t('account.unknownLot')}</a></td>
+                        <td><a href="auction.html?id=${bid.auction_id}" class="text-sm text-muted">${bid.auction_title || 'Auction'}</a></td>
+                        <td>${formatCurrency(bid.amount)}</td>
+                        <td>${formatCurrency(liveCurrentBid)}</td>
+                        <td>${statusBadge}</td>
+                        <td class="text-sm">${formatDateTime(bid.created_at)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Determine bid status
+        function getBidStatus(bid) {
+            const lotEnded = hasEnded(bid.auction_end_date);
+            const isHighestBid = bid.highest_bidder_id
+                ? String(bid.highest_bidder_id) === String(user.id)
+                : Number(bid.amount || 0) >= Number(bid.current_bid || bid.starting_bid || 0);
+            
+            // If auction is still active
+            if (!lotEnded) {
+                return isHighestBid ? 'Winning' : 'Outbid';
+            }
+            
+            // If auction has ended
+            if (lotEnded) {
+                return isHighestBid ? 'Won' : 'Lost';
+            }
+            
+            return 'Active';
+        }
+
+        // Get status badge HTML
+        function getStatusBadge(status) {
+            const statusLower = status.toLowerCase();
+            switch(statusLower) {
+                case 'winning':
+                    return '<span class="badge badge-success">' + i18n.t('account.winning') + '</span>';
+                case 'won':
+                    return '<span class="badge badge-success">' + i18n.t('account.won') + '</span>';
+                case 'outbid':
+                    return '<span class="badge badge-warning">' + i18n.t('account.outbid') + '</span>';
+                case 'lost':
+                    return '<span class="badge badge-charcoal">' + i18n.t('account.lost') + '</span>';
+                case 'active':
+                    return '<span class="badge badge-primary">' + i18n.t('account.active') + '</span>';
+                default:
+                    return '<span class="badge badge-charcoal">' + status + '</span>';
+            }
+        }
+
+        // Load profile
+        function loadProfile() {
+            if (!user) return;
+            document.getElementById('profile-name').textContent = user.full_name || user.email;
+            document.getElementById('profile-email').textContent = user.email;
+            document.getElementById('profile-date').textContent = user.createdAt ? formatDate(user.createdAt) : 'N/A';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Setup filter button clicks
+            document.querySelectorAll('[data-filter]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all filter buttons
+                    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+                    
+                    // Update current filter and re-render
+                    currentFilter = btn.getAttribute('data-filter');
+                    renderBids(allBids);
+                });
+            });
+
+            const currentUser = getCurrentUser();
+            
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            if (currentUser.role === 'admin') {
+                window.location.href = 'admin.html';
+                return;
+            }
+
+            user = currentUser;
+            
+            loadWatchlist();
+            loadBids();
+            loadProfile();
+        });
+
+        // Reload data when language changes
+        window.addEventListener('languageChanged', () => {
+            if (user) {
+                loadWatchlist();
+                renderBids(allBids);
+            }
+        });
+    </script>
+</body>
+
+</html>

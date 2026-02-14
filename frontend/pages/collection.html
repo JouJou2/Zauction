@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Zauction Collection - A comprehensive index of all lots, past and present.">
+    <title>Collection - Zauction</title>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages/collection.css">
+    <link rel="stylesheet" href="../css/rtl.css">
+    <link rel="stylesheet" href="../css/components/lang-toggle.css">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="section">
+        <div class="container">
+            <!-- Header -->
+            <div class="page-header">
+                <h1 data-i18n="nav.collection">Collection</h1>
+                <p class="text-graphite" data-i18n="collection.subtitle">All lots, past and present.</p>
+            </div>
+
+            <!-- Minimal Filters -->
+            <div class="collection-filters mb-12">
+                <div class="filter-group">
+                    <label class="form-label" data-i18n="admin.status">Status</label>
+                    <div class="status-toggles">
+                        <button class="status-btn active" data-status="all" data-i18n="common.all">All</button>
+                        <button class="status-btn" data-status="active" data-i18n="auction.live">Live</button>
+                        <button class="status-btn" data-status="closed" data-i18n="auction.ended">Closed</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="form-label" for="auction-select" data-i18n="admin.auctions">Auction</label>
+                    <select id="auction-select" class="form-select">
+                        <option value="" data-i18n="collection.allAuctions">All Auctions</option>
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="form-label" for="category-select" data-i18n="auction.category">Category</label>
+                    <select id="category-select" class="form-select">
+                        <option value="" data-i18n="categories.all">All Categories</option>
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+            </div>
+
+            <!-- Items Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg" id="collection-grid">
+                <!-- Populated via JS -->
+            </div>
+
+            <!-- Pagination (if needed, simplified for now) -->
+            <div class="pagination" id="pagination">
+                <!-- JS will handle simple load more or pages if list is huge, 
+                     but requirement said pagination preferred. for demo data, single page is fine, 
+                     but I'll add placeholder pagination structure -->
+                <button class="pagination-btn" disabled>&larr;</button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn" disabled>&rarr;</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Zauction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script defer src="../js/i18n.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/countdown.js"></script>
+    <script>
+        // CLIENT - SIDE LOGIC FOR COLLECTION
+
+        let allLots = [];
+        let filteredLots = [];
+        let allAuctions = [];
+
+        // Filter state
+        const filters = {
+            status: 'all',
+            auctionId: '',
+            category: ''
+        };
+
+        async function initCollection() {
+            try {
+                // Fetch all lots from API
+                const lotsResponse = await lotsAPI.getAll();
+                allLots = lotsResponse.lots || [];
+
+                // Fetch all auctions for filter dropdown
+                const auctionsResponse = await auctionsAPI.getAll();
+                allAuctions = auctionsResponse.auctions || [];
+
+                populateFilters();
+                applyFilters();
+            } catch (error) {
+                console.error('Failed to load collection:', error);
+                document.getElementById('collection-grid').innerHTML = 
+                    '<p class="text-muted col-span-full text-center py-12" data-i18n="errors.loadCollection">Failed to load collection</p>';
+                if (window.i18n) window.i18n.translatePage();
+            }
+        }
+
+        function populateFilters() {
+            // Auctions Dropdown
+            const auctionSelect = document.getElementById('auction-select');
+            auctionSelect.innerHTML = '<option value="" data-i18n="collection.allAuctions">All Auctions</option>';
+            allAuctions.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
+
+            allAuctions.forEach(auction => {
+                const option = document.createElement('option');
+                option.value = auction.id;
+                option.textContent = auction.title;
+                auctionSelect.appendChild(option);
+            });
+
+            // Categories (Unique across all lots)
+            const categories = [...new Set(allLots.map(lot => lot.category).filter(Boolean))].sort();
+            const categorySelect = document.getElementById('category-select');
+            categorySelect.innerHTML = '<option value="" data-i18n="categories.all">All Categories</option>';
+
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                categorySelect.appendChild(option);
+            });
+            
+            // Translate newly added filter options
+            if (window.i18n) window.i18n.translatePage();
+        }
+
+        function applyFilters() {
+            filteredLots = allLots.filter(lot => {
+                // Determine if lot is closed based on auction end date
+                const now = new Date();
+                const endDate = lot.end_date ? new Date(lot.end_date) : null;
+                const isClosed = endDate && endDate < now;
+                
+                // Status Filter
+                if (filters.status === 'active' && isClosed) return false;
+                if (filters.status === 'closed' && !isClosed) return false;
+
+                // Auction Filter
+                if (filters.auctionId && lot.auction_id !== filters.auctionId) return false;
+
+                // Category Filter
+                if (filters.category && lot.category !== filters.category) return false;
+
+                return true;
+            });
+
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const container = document.getElementById('collection-grid');
+            container.innerHTML = '';
+
+            if (filteredLots.length === 0) {
+                container.innerHTML = '<p class="text-muted col-span-full text-center py-12">No lots found matching your criteria.</p>';
+                return;
+            }
+
+            filteredLots.forEach(lot => {
+                const auction = allAuctions.find(a => a.id === lot.auction_id);
+                // Determine if lot is closed based on auction end date
+                const now = new Date();
+                const endDate = lot.end_date ? new Date(lot.end_date) : null;
+                const isClosed = endDate && endDate < now;
+                const cardClass = isClosed ? 'card card-archive' : 'card';
+
+                let priceLabel = '';
+                let priceValue = '';
+
+                if (isClosed) {
+                    if (lot.status === 'sold') {
+                        priceLabel = 'Hammer Price';
+                        priceValue = formatCurrency(lot.final_price || lot.current_bid || 0);
+                    } else {
+                        priceValue = 'Unsold';
+                        priceLabel = lot.estimate_low && lot.estimate_high 
+                            ? 'Est. ' + formatCurrency(lot.estimate_low) + ' - ' + formatCurrency(lot.estimate_high)
+                            : '';
+                    }
+                } else {
+                    priceLabel = lot.current_bid && lot.current_bid > 0 ? 'Current Bid' : 'Starting Bid';
+                    priceValue = lot.current_bid && lot.current_bid > 0 ? formatCurrency(lot.current_bid) : formatCurrency(lot.starting_bid);
+                }
+
+                const imageUrl = lot.primary_image || lot.image_data || '../assets/images/placeholder.png';
+                const countdownHtml = isClosed ? '' : '<span class="text-xs font-medium" data-countdown="' + lot.end_date + '" data-compact></span>';
+
+                const card = document.createElement('a');
+                card.href = 'lot.html?id=' + lot.id + (isClosed ? '&archive=true' : '');
+                card.className = cardClass;
+                card.innerHTML = 
+                    '<div class="relative">' +
+                        '<img src="' + imageUrl + '" alt="' + lot.title + '" class="card-image">' +
+                        (!isClosed ? '<div class="absolute top-2 right-2"><span class="badge badge-gold bg-white">Live</span></div>' : '') +
+                    '</div>' +
+                    '<div class="card-content">' +
+                        '<div class="text-xs text-muted mb-1">' + (auction ? auction.title : '') + '</div>' +
+                        '<h4 class="card-title text-base">' + lot.title + '</h4>' +
+                        '<div class="flex justify-between items-end mt-4">' +
+                            '<div>' +
+                                '<p class="price text-sm">' + priceValue + '</p>' +
+                                '<p class="text-xs text-muted">' + priceLabel + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="card-footer text-xs text-muted">' +
+                        'Lot ' + lot.lot_number +
+                        (isClosed ? '' : ' • ' + countdownHtml) +
+                    '</div>';
+
+                container.appendChild(card);
+            });
+
+            if (!filters.status.includes('closed')) {
+                initCountdowns();
+            }
+            
+            // Translate newly rendered lot cards
+            if (window.i18n) window.i18n.translatePage();
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            initCollection();
+
+            // Status Buttons
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Toggle active class
+                    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+
+                    filters.status = e.target.dataset.status;
+                    applyFilters();
+                });
+            });
+
+            // Dropdowns
+            document.getElementById('auction-select').addEventListener('change', (e) => {
+                filters.auctionId = e.target.value;
+                applyFilters();
+            });
+
+            document.getElementById('category-select').addEventListener('change', (e) => {
+                filters.category = e.target.value;
+                applyFilters();
+            });
+        });
+    </script>
+</body>
+
+</html>

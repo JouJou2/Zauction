@@ -1,0 +1,108 @@
+/* ==================== LANGUAGE TOGGLE COMPONENT ==================== */
+
+.lang-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 2rem;
+    padding: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lang-toggle {
+    padding: 0.5rem 1rem;
+    border-radius: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary, #999);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.lang-toggle:hover {
+    color: var(--text-primary, #fff);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.lang-toggle.active {
+    color: var(--text-primary, #fff);
+    background: var(--primary-color, #d4af37);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.lang-toggle:focus {
+    outline: 2px solid var(--primary-color, #d4af37);
+    outline-offset: 2px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .lang-toggle-container {
+        padding: 0.2rem;
+    }
+
+    .lang-toggle {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Dark Mode Support */
+.light-mode .lang-toggle-container {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .lang-toggle {
+    color: var(--text-secondary-light, #666);
+}
+
+.light-mode .lang-toggle:hover {
+    color: var(--text-primary-light, #000);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.light-mode .lang-toggle.active {
+    color: #fff;
+}
+
+/* RTL Adjustments */
+body.rtl .lang-toggle-container {
+    flex-direction: row-reverse;
+}
+
+/* Accessibility */
+.lang-toggle:focus-visible {
+    outline: 2px solid var(--primary-color, #d4af37);
+    outline-offset: 2px;
+}
+
+.lang-toggle[aria-current="true"] {
+    font-weight: 600;
+}
+
+/* Animation */
+.lang-toggle.active {
+    animation: langActivate 0.3s ease;
+}
+
+@keyframes langActivate {
+    0% {
+        transform: scale(0.95);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

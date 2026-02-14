@@ -1,0 +1,217 @@
+/* ============================================
+   ZAUCTION - DESIGN SYSTEM VARIABLES
+   Premium Timed Auction Platform
+   ============================================ */
+
+:root {
+  /* ==================== COLORS ==================== */
+
+  /* Primary Palette - Warm & Refined */
+  --color-ivory: #FAF8F3;
+  --color-ivory-dark: #F5F2EB;
+  --color-parchment: #F0EDE5;
+
+  /* Text Colors - Charcoal & Graphite */
+  --color-charcoal: #2C2C2C;
+  --color-graphite: #4A4A4A;
+  --color-graphite-light: #6B6B6B;
+  --color-text-muted: #8A8A8A;
+  --color-text-light: var(--color-text-muted);
+
+  /* Accent - Antique Gold/Copper */
+  --color-gold: #B8956A;
+  --color-gold-light: #D4B895;
+  /* Lighter gold for gradients */
+  --color-gold-dark: #9A7A52;
+  --color-copper: #B87333;
+  --color-rich-black: #1A1A1A;
+  /* Premium dark background */
+
+  /* Functional Colors */
+  --color-white: #FFFFFF;
+  --color-border: #E0DDD5;
+  --color-border-light: #ECEAE3;
+  --color-success: #5A7D5A;
+  --color-error: #A85A5A;
+  --color-warning: #B89A5A;
+
+  /* Overlays & Shadows */
+  --color-overlay: rgba(26, 26, 26, 0.6);
+  --shadow-sm: 0 1px 3px rgba(26, 26, 26, 0.08);
+  --shadow-md: 0 4px 12px rgba(26, 26, 26, 0.08);
+  --shadow-lg: 0 12px 32px rgba(26, 26, 26, 0.12);
+  --shadow-glow: 0 0 20px rgba(184, 149, 106, 0.3);
+  /* Gold glow */
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+  --glass-blur: blur(12px);
+
+  /* ==================== TYPOGRAPHY ==================== */
+
+  /* Font Families */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Font Sizes - Fluid Scale */
+  --text-xs: 0.75rem;
+  /* 12px */
+  --text-sm: 0.875rem;
+  /* 14px */
+  --text-base: 1rem;
+  /* 16px */
+  --text-lg: 1.125rem;
+  /* 18px */
+  --text-xl: 1.25rem;
+  /* 20px */
+  --text-2xl: 1.5rem;
+  /* 24px */
+  --text-3xl: 1.875rem;
+  /* 30px */
+  --text-4xl: 2.25rem;
+  /* 36px */
+  --text-5xl: 3rem;
+  /* 48px */
+  --text-6xl: 3.75rem;
+  /* 60px */
+
+  /* Font Weights */
+  --weight-light: 300;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Line Heights */
+  --leading-tight: 1.2;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 1.75;
+
+  /* Letter Spacing */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+  --tracking-wider: 0.05em;
+
+  /* ==================== SPACING ==================== */
+
+  --space-1: 0.25rem;
+  /* 4px */
+  --space-2: 0.5rem;
+  /* 8px */
+  --space-3: 0.75rem;
+  /* 12px */
+  --space-4: 1rem;
+  /* 16px */
+  --space-5: 1.25rem;
+  /* 20px */
+  --space-6: 1.5rem;
+  /* 24px */
+  --space-8: 2rem;
+  /* 32px */
+  --space-10: 2.5rem;
+  /* 40px */
+  --space-12: 3rem;
+  /* 48px */
+  --space-16: 4rem;
+  /* 64px */
+  --space-20: 5rem;
+  /* 80px */
+  --space-24: 6rem;
+  /* 96px */
+  --space-32: 8rem;
+  /* 128px */
+
+  /* Legacy compatibility aliases */
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-4);
+  --spacing-lg: var(--space-6);
+  --spacing-xl: var(--space-8);
+  --color-off-white: var(--color-ivory-dark);
+
+  /* Section Spacing */
+  --section-padding-sm: var(--space-16);
+  --section-padding-md: var(--space-20);
+  --section-padding-lg: var(--space-24);
+
+  /* ==================== LAYOUT ==================== */
+
+  /* Container Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1440px;
+
+  /* Grid Gaps */
+  --gap-sm: var(--space-4);
+  --gap-md: var(--space-6);
+  --gap-lg: var(--space-8);
+  --gap-xl: var(--space-12);
+
+  /* Border Radius */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* Border Widths */
+  --border-thin: 1px;
+  --border-medium: 2px;
+
+  /* ==================== ANIMATIONS ==================== */
+
+  /* Durations - Slow & Elegant */
+  --duration-fast: 200ms;
+  --duration-normal: 400ms;
+  --duration-slow: 600ms;
+  --duration-slower: 800ms;
+
+  /* Easing Functions */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-elegant: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ==================== BREAKPOINTS ==================== */
+  /* Used in media queries */
+  /* Mobile: < 640px */
+  /* Tablet: 640px - 1024px */
+  /* Desktop: > 1024px */
+  /* Large Desktop: > 1440px */
+
+  /* ==================== Z-INDEX SCALE ==================== */
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+}
+
+/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  :root {
+    --text-5xl: 3.5rem;
+    /* 56px */
+    --text-6xl: 4.5rem;
+    /* 72px */
+  }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  :root {
+    --section-padding-sm: var(--space-20);
+    --section-padding-md: var(--space-24);
+    --section-padding-lg: var(--space-32);
+  }
+}

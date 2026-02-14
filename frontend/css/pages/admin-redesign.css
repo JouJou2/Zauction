@@ -1,0 +1,224 @@
+/* Admin Redesign Layout */
+body {
+    background-color: var(--color-off-white);
+    background-image: radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 20%);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* Sidebar Styling */
+.admin-sidebar {
+    width: 260px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(212, 175, 55, 0.2);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+}
+
+.admin-logo {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    color: var(--color-charcoal);
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: block;
+    text-decoration: none;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex-grow: 1;
+}
+
+.nav-item {
+    padding: 0.875rem 1.25rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--color-charcoal);
+    transform: translateX(4px);
+}
+
+.nav-item.active {
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.sidebar-footer {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Main Content Area */
+.admin-main {
+    flex-grow: 1;
+    margin-left: 260px;
+    /* Width of sidebar */
+    padding: 2.5rem 3rem;
+    background-color: transparent;
+}
+
+.page-header {
+    margin-bottom: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--color-charcoal);
+}
+
+/* Dashboard Cards */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.stat-value {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    color: var(--color-charcoal);
+}
+
+/* Quick Actions Section */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.action-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px dashed var(--color-gold);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+    text-decoration: none;
+    color: var(--color-charcoal);
+}
+
+.action-card:hover {
+    background: white;
+    border-style: solid;
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.2);
+    transform: translateY(-4px);
+}
+
+.action-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-gold);
+}
+
+.action-text {
+    font-weight: 600;
+}
+
+/* Hide/Show logic for sections */
+.admin-view {
+    display: none;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.admin-view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem;
+    }
+
+    .sidebar-nav {
+        display: none;
+        /* In real app, toggle via burger menu */
+    }
+
+    .admin-main {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+}

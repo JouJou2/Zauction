@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description"
+    content="Zauction - Curated timed auctions for antiques and rare objects. Premium European-style auction house featuring fine art, furniture, ceramics, and collectibles.">
+  <title>Zauction - Premium Timed Auctions for Antiques & Rare Objects</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/typography.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/components/lang-toggle.css">
+  <link rel="stylesheet" href="css/pages/landing.css">
+  <link rel="stylesheet" href="css/rtl.css">
+  <!-- AOS Animation Library -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+
+<body id="landing-page">
+  <!-- Header -->
+  <div id="site-header"></div>
+
+  <!-- Hero Section - Full Screen -->
+  <section class="hero">
+    <!-- Hero Video Background -->
+    <div class="hero-video-container">
+      <video id="hero-video" class="hero-video" autoplay muted playsinline preload="auto"
+        poster="assets/images/hero-poster.png" aria-hidden="true">
+        <source src="assets/videos/hero-background.mp4" type="video/mp4">
+        <!-- Fallback for browsers that don't support video -->
+        Your browser does not support the video tag.
+      </video>
+      <div class="hero-overlay"></div>
+    </div>
+
+    <div class="hero-content">
+      <h1 class="hero-title" data-aos="fade-up" data-aos-duration="1000" data-i18n="hero.title">Curated timed
+        auctions<br>for antiques and rare
+        objects</h1>
+      <p class="hero-subtitle" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200"
+        data-i18n="hero.subtitle">Discover exceptional
+        pieces from distinguished collections</p>
+
+      <div class="hero-search" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
+        <input type="text" class="form-input search-input" data-i18n-placeholder="buttons.search"
+          placeholder="Search auctions, categories, or items..." id="hero-search" autocomplete="off">
+        <div id="search-suggestions" class="search-suggestions" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+      <span class="scroll-text" data-i18n="common.scrollToExplore">SCROLL TO EXPLORE</span>
+      <svg class="scroll-arrow" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Featured Auctions -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <h2 data-i18n="auction.featured">Featured Auctions</h2>
+        <p class="text-graphite" data-i18n="auction.featuredDesc">Carefully curated collections from around the world
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg" id="featured-auctions">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Ending Soon -->
+  <section class="section" style="background-color: var(--color-parchment);">
+    <div class="container">
+      <div class="section-header" data-aos="fade-up">
+        <h2 data-i18n="auction.endingSoon">Ending Soon</h2>
+        <p class="text-graphite" data-i18n="auction.endingSoonDesc">Last chance to bid on these exceptional items</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg" id="ending-soon">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Section -->
+  <section class="section trust-section">
+    <div class="container">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-xl">
+        <div class="trust-item" data-aos="fade-up" data-aos-delay="0">
+          <div class="trust-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <h3 data-i18n="auction.timedAuctions">Timed Auctions</h3>
+          <p class="text-graphite" data-i18n="auction.timedAuctionsDesc">Bid at your convenience with clear end times.
+            No pressure, no rush.</p>
+        </div>
+
+        <div class="trust-item" data-aos="fade-up" data-aos-delay="200">
+          <div class="trust-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+          </div>
+          <h3 data-i18n="auction.transparentFees">Transparent Fees</h3>
+          <p class="text-graphite" data-i18n="auction.transparentFeesDesc">Clear buyer's premium disclosed upfront. No
+            hidden charges.</p>
+        </div>
+
+        <div class="trust-item" data-aos="fade-up" data-aos-delay="400">
+          <div class="trust-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3 data-i18n="auction.verifiedSellers">Verified Sellers</h3>
+          <p class="text-graphite" data-i18n="auction.verifiedSellersDesc">All items authenticated and cataloged by our
+            expert team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>About</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/about.html">About Zauction</a></li>
+            <li><a href="pages/info/team.html">Our Team</a></li>
+            <li><a href="pages/info/contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Bidding</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/how-bidding-works.html">How Bidding Works</a></li>
+            <li><a href="pages/info/buyers-guide.html">Buyer's Guide</a></li>
+            <li><a href="pages/info/condition-reports.html">Condition Reports</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Services</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/fees-payments.html">Fees & Payments</a></li>
+            <li><a href="pages/info/shipping-pickup.html">Shipping & Pickup</a></li>
+            <li><a href="pages/info/authentication.html">Authentication</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="pages/info/terms.html">Terms of Service</a></li>
+            <li><a href="pages/info/privacy.html">Privacy Policy</a></li>
+            <li><a href="pages/info/cookies.html">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Zauction. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/watchlist.js"></script>
+  <script>
+    // Load featured auctions from API
+    async function loadFeaturedAuctions() {
+      try {
+        const { auctions } = await auctionsAPI.getAll({ featured: 'true' });
+        const now = new Date();
+        const activeFeatured = auctions.filter(auction => new Date(auction.end_date) > now);
+        const container = document.getElementById('featured-auctions');
+
+        if (activeFeatured.length === 0) {
+          container.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;" data-i18n="auction.noFeaturedAuctions">No featured auctions available</p>';
+          if (window.i18n) window.i18n.translatePage();
+          return;
+        }
+
+        container.innerHTML = activeFeatured.slice(0, 3).map(auction => {
+          const now = new Date();
+          const startDate = new Date(auction.start_date);
+          const hasNotStarted = startDate > now;
+          const startsSoon = hasNotStarted && (startDate.getTime() - now.getTime()) <= (48 * 60 * 60 * 1000);
+
+          const statusText = hasNotStarted
+            ? `Starts ${formatDate(auction.start_date)}`
+            : `Ends ${formatDate(auction.end_date)}`;
+
+          const badge = hasNotStarted
+            ? (startsSoon
+                ? '<span class="badge badge-info">Starts Soon</span>'
+                : '<span class="badge badge-info">Didn\'t Start</span>')
+            : (isEndingSoon(auction.end_date) ? '<span class="badge badge-gold" data-i18n="auction.endingSoon">Ending Soon</span>' : '');
+
+          return `
+          <a href="pages/auction.html?id=${auction.id}" class="card">
+            <img src="${auction.image_data || auction.image_url || 'assets/images/placeholder.png'}" alt="${auction.title}" class="card-image">
+            <div class="card-content">
+              <div class="label mb-2">${auction.category || 'Auction'}</div>
+              <h3 class="card-title">${auction.title}</h3>
+              <p class="card-subtitle">${auction.lot_count || 0} <span data-i18n="auction.lots">lots</span> • ${auction.location || 'Location TBA'}</p>
+            </div>
+            <div class="card-footer">
+              <span class="text-sm text-muted">${statusText}</span>
+              ${badge}
+            </div>
+          </a>
+        `;
+        }).join('');
+        
+        // Translate the newly added dynamic content
+        if (window.i18n) window.i18n.translatePage();
+      } catch (error) {
+        console.error('Failed to load featured auctions:', error);
+        document.getElementById('featured-auctions').innerHTML = 
+          '<p class="text-center text-muted" style="grid-column: 1 / -1;" data-i18n="errors.loadAuctions">Failed to load auctions</p>';
+        if (window.i18n) window.i18n.translatePage();
+      }
+    }
+
+    // Load ending soon auctions (ending within 48 hours)
+    async function loadEndingSoon() {
+      const container = document.getElementById('ending-soon');
+      
+      try {
+        const { auctions } = await auctionsAPI.getAll({ status: 'active' });
+        
+        // Filter auctions ending within next 48 hours
+        const now = new Date();
+        const fortyEightHoursFromNow = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+        
+        const endingSoon = auctions.filter(auction => {
+          const endDate = new Date(auction.end_date);
+          return endDate > now && endDate <= fortyEightHoursFromNow;
+        });
+        
+        // Sort by end date (soonest first)
+        endingSoon.sort((a, b) => new Date(a.end_date) - new Date(b.end_date));
+        
+        // Take top 4
+        const topEndingSoon = endingSoon.slice(0, 4);
+        
+        if (topEndingSoon.length === 0) {
+          container.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;" data-i18n="auction.noEndingSoon">No auctions ending soon</p>';
+          if (window.i18n) window.i18n.translatePage();
+          return;
+        }
+        
+        container.innerHTML = topEndingSoon.map(auction => {
+          const imageUrl = auction.image_data || auction.image_url || 'assets/images/placeholder.png';
+          const lotCount = auction.lot_count || 0;
+          
+          return `
+            <a href="pages/auction.html?id=${auction.id}" class="card">
+              <img src="${imageUrl}" alt="${auction.title}" class="card-image">
+              <div class="card-content">
+                <div class="label mb-2">${auction.category || 'Auction'}</div>
+                <h4 class="card-title">${auction.title}</h4>
+                <p class="text-sm text-graphite mb-4">${lotCount} ${lotCount === 1 ? 'lot' : 'lots'}</p>
+                <div class="flex-between-center">
+                  <span class="badge badge-gold" data-i18n="auction.endingSoon">Ending Soon</span>
+                  <span class="text-xs font-medium" data-countdown="${auction.end_date}"></span>
+                </div>
+              </div>
+            </a>
+          `;
+        }).join('');
+        
+        if (window.i18n) window.i18n.translatePage();
+        initCountdowns();
+      } catch (error) {
+        console.error('Failed to load ending soon auctions:', error);
+        container.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">Failed to load ending soon auctions</p>';
+      }
+    }
+
+    // Search functionality with autocomplete
+    const searchInput = document.getElementById('hero-search');
+    const suggestionsContainer = document.getElementById('search-suggestions');
+    let searchTimeout;
+
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      
+      clearTimeout(searchTimeout);
+      
+      if (query.length < 2) {
+        suggestionsContainer.style.display = 'none';
+        return;
+      }
+
+      searchTimeout = setTimeout(async () => {
+        try {
+          const response = await fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(query)}`);
+          const data = await response.json();
+          
+          displaySearchSuggestions(data.auctions || [], data.lots || []);
+        } catch (error) {
+          console.error('Search error:', error);
+          suggestionsContainer.style.display = 'none';
+        }
+      }, 300);
+    });
+
+    // Handle Enter key to search all
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = e.target.value.trim();
+        if (query.length > 1) {
+          window.location.href = `pages/auctions.html?search=${encodeURIComponent(query)}`;
+        }
+      }
+    });
+
+    function displaySearchSuggestions(auctions, lots) {
+      if (auctions.length === 0 && lots.length === 0) {
+        suggestionsContainer.innerHTML = '<div class="no-results" style="padding: var(--space-4); text-align: center; color: rgba(255, 255, 255, 0.7);">No results found</div>';
+        suggestionsContainer.style.display = 'block';
+        return;
+      }
+
+      let html = '';
+
+      // Show auctions
+      if (auctions.length > 0) {
+        html += `
+          <div class="search-suggestions-section">
+            <div class="search-suggestions-title">Auctions</div>
+            ${auctions.map(auction => {
+              const now = new Date();
+              const endDate = auction.end_date ? new Date(auction.end_date) : null;
+              const startDate = auction.start_date ? new Date(auction.start_date) : null;
+              const isLiveNow = !!endDate && endDate > now && (!startDate || startDate <= now);
+
+              return `
+              <a href="pages/auction.html?id=${auction.id}" class="suggestion-card suggestion-card-auction">
+                <img src="${auction.image_data || 'assets/images/placeholder.png'}" 
+                     alt="${auction.title}" 
+                     class="suggestion-card-image">
+                <div class="suggestion-card-content">
+                  <div class="suggestion-card-title">${auction.title}</div>
+                  <div class="suggestion-card-meta">
+                    <span>${auction.lot_count || 0} lots</span>
+                    ${isLiveNow ? '<span style="color: var(--color-success);">• Live Now</span>' : ''}
+                  </div>
+                </div>
+              </a>
+            `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      // Show lots
+      if (lots.length > 0) {
+        html += `
+          <div class="search-suggestions-section">
+            <div class="search-suggestions-title">Lots</div>
+            ${lots.map(lot => `
+              <a href="pages/lot.html?id=${lot.id}" class="suggestion-card">
+                <img src="${lot.primary_image || 'assets/images/placeholder.png'}" 
+                     alt="${lot.title}" 
+                     class="suggestion-card-image">
+                <div class="suggestion-card-content">
+                  <div class="suggestion-card-title">${lot.title}</div>
+                  <div class="suggestion-card-meta">
+                    <span>Lot ${lot.lot_number}</span>
+                    ${lot.category ? `<span>• ${lot.category}</span>` : ''}
+                  </div>
+                  <div class="suggestion-card-price">
+                    ${lot.current_bid && lot.current_bid > 0 
+                      ? formatCurrency(lot.current_bid) 
+                      : formatCurrency(lot.starting_bid)}
+                  </div>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      suggestionsContainer.innerHTML = html;
+      suggestionsContainer.style.display = 'block';
+    }
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+        suggestionsContainer.style.display = 'none';
+      }
+    });
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFeaturedAuctions();
+      loadEndingSoon();
+    });
+  </script>
+  <script src="js/hero-video.js"></script>
+  <!-- Initialize AOS -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      once: true,
+      offset: 100,
+      duration: 800,
+      easing: 'ease-out-cubic',
+    });
+  </script>
+</body>
+
+</html>

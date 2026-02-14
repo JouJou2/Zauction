@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+
+# WhatsApp session data
+backend/auth_info/
+
+# Database
+backend/data/
+
+# Build files
+frontend/build/
+frontend/.pnp
+frontend/.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+
+# Misc
+.DS_Store
+*.log
+.vscode/
+.idea/

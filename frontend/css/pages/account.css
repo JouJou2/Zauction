@@ -1,0 +1,110 @@
+/* ============================================
+   ZAUCTION - ACCOUNT PAGE STYLES
+   Auth forms, tabs, profile
+   ============================================ */
+
+/* Auth Container */
+.auth-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: var(--space-12) 0;
+}
+
+.auth-card {
+    background-color: var(--color-white);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-12);
+    box-shadow: var(--shadow-md);
+}
+
+.demo-credentials {
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: var(--border-thin) solid var(--color-border-light);
+}
+
+/* Tabs */
+.account-tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-8);
+    border-bottom: var(--border-thin) solid var(--color-border);
+}
+
+.tab-btn {
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-base);
+    font-weight: var(--weight-medium);
+    color: var(--color-graphite);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-elegant);
+}
+
+.tab-btn:hover {
+    color: var(--color-charcoal);
+}
+
+.tab-btn.active {
+    color: var(--color-gold);
+    border-bottom-color: var(--color-gold);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Profile Info */
+.profile-info {
+    max-width: 600px;
+    background-color: var(--color-white);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-8);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-4) 0;
+    border-bottom: var(--border-thin) solid var(--color-border-light);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row .label {
+    font-weight: var(--weight-medium);
+    color: var(--color-graphite);
+}
+
+/* Table Container */
+.table-container {
+    overflow-x: auto;
+    background-color: var(--color-white);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+/* Responsive */
+@media (max-width: 639px) {
+    .auth-card {
+        padding: var(--space-8);
+    }
+
+    .account-tabs {
+        overflow-x: auto;
+    }
+
+    .tab-btn {
+        white-space: nowrap;
+    }
+}

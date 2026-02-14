@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(uuid()) @db.Uuid
+  email        String      @unique @db.VarChar(255)
+  passwordHash String      @map("password_hash") @db.VarChar(255)
+  fullName     String      @map("full_name") @db.VarChar(255)
+  phone        String?     @db.VarChar(20)
+  role         UserRole    @default(user)
+  status       UserStatus  @default(pending)
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  auctions     Auction[]
+  bids         Bid[]
+  watchlist    Watchlist[]
+
+  @@index([email])
+  @@index([status])
+  @@index([role])
+  @@map("users")
+}
+
+model Auction {
+  id            String        @id @default(uuid()) @db.Uuid
+  title         String        @db.VarChar(255)
+  description   String?
+  category      String?       @db.VarChar(100)
+  location      String?       @db.VarChar(255)
+  startDate     DateTime      @map("start_date") @db.Timestamptz(6)
+  endDate       DateTime      @map("end_date") @db.Timestamptz(6)
+  buyersPremium Decimal       @default(25.00) @map("buyers_premium") @db.Decimal(5, 2)
+  imageUrl      String?       @map("image_url") @db.VarChar(500)
+  featured      Boolean       @default(false)
+  status        AuctionStatus @default(upcoming)
+  createdBy     String?       @map("created_by") @db.Uuid
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  image_data    String?
+  creator       User?         @relation(fields: [createdBy], references: [id])
+  lots          Lot[]
+
+  @@index([status])
+  @@index([endDate])
+  @@index([featured])
+  @@map("auctions")
+}
+
+model Lot {
+  id           String      @id @default(uuid()) @db.Uuid
+  auctionId    String      @map("auction_id") @db.Uuid
+  lotNumber    Int         @map("lot_number")
+  title        String      @db.VarChar(255)
+  description  String?
+  category     String?     @db.VarChar(100)
+  condition    String?     @db.VarChar(100)
+  provenance   String?
+  estimateLow  Decimal?    @map("estimate_low") @db.Decimal(10, 2)
+  estimateHigh Decimal?    @map("estimate_high") @db.Decimal(10, 2)
+  startingBid  Decimal     @map("starting_bid") @db.Decimal(10, 2)
+  reservePrice Decimal?    @map("reserve_price") @db.Decimal(10, 2)
+  currentBid   Decimal?    @map("current_bid") @db.Decimal(10, 2)
+  bidIncrement Decimal     @default(100.00) @map("bid_increment") @db.Decimal(10, 2)
+  bidCount     Int         @default(0) @map("bid_count")
+  status       LotStatus   @default(active)
+  createdAt    DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  image_data   String?
+  bids         Bid[]
+  media        LotMedia[]
+  auction      Auction     @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  watchlist    Watchlist[]
+
+  @@unique([auctionId, lotNumber])
+  @@index([auctionId])
+  @@index([status])
+  @@index([currentBid])
+  @@map("lots")
+}
+
+model LotMedia {
+  id           String    @id @default(uuid()) @db.Uuid
+  lotId        String    @map("lot_id") @db.Uuid
+  mediaType    MediaType @map("media_type")
+  url          String    @db.Text
+  thumbnailUrl String?   @map("thumbnail_url") @db.Text
+  displayOrder Int       @default(0) @map("display_order")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  lot          Lot       @relation(fields: [lotId], references: [id], onDelete: Cascade)
+
+  @@index([lotId])
+  @@index([lotId, displayOrder])
+  @@map("lot_media")
+}
+
+model Bid {
+  id        String    @id @default(uuid()) @db.Uuid
+  lotId     String    @map("lot_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  amount    Decimal   @db.Decimal(10, 2)
+  status    BidStatus @default(active)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  lot       Lot       @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@index([lotId])
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@index([lotId, createdAt(sort: Desc)])
+  @@map("bids")
+}
+
+model Watchlist {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  lotId     String   @map("lot_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  lot       Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lotId])
+  @@index([userId])
+  @@index([lotId])
+  @@map("watchlist")
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+enum UserStatus {
+  pending
+  approved
+  rejected
+  suspended
+}
+
+enum AuctionStatus {
+  upcoming
+  active
+  ended
+}
+
+enum LotStatus {
+  active
+  sold
+  unsold
+  withdrawn
+}
+
+enum MediaType {
+  image
+  video
+}
+
+enum BidStatus {
+  active
+  outbid
+  winning
+  won
+  lost
+}

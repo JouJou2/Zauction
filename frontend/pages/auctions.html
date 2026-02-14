@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description"
+        content="Browse all current auctions at Zauction - Premium timed auctions for antiques and rare objects.">
+    <title>All Auctions - Zauction</title>
+
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/typography.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/components/lang-toggle.css">
+    <link rel="stylesheet" href="../css/pages/auctions.css">
+    <link rel="stylesheet" href="../css/rtl.css">
+</head>
+
+<body>
+    <div id="site-header"></div>
+
+    <main class="section">
+        <div class="container">
+            <div class="page-header">
+                <h1 data-i18n="nav.auctions">Auctions</h1>
+                <p class="text-graphite text-lg" data-i18n="auction.curatedCollections">Curated collections from around
+                    the world</p>
+            </div>
+
+            <!-- Featured Auctions Section -->
+            <section class="section-spacing" id="featured-section">
+                <div class="section-header">
+                    <h2 data-i18n="auction.featured">Featured Auctions</h2>
+                    <p class="text-graphite" data-i18n="auction.curatedHighlights">Carefully curated highlights</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg" id="featured-auctions">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Ongoing Auctions Section -->
+            <section class="section-spacing" id="ongoing-section">
+                <div class="section-header">
+                    <h2 data-i18n="auction.ongoing">Ongoing Auctions</h2>
+                    <p class="text-graphite" data-i18n="auction.acceptingBids">Currently accepting bids</p>
+                </div>
+
+                <!-- Search & Filter Toolbar -->
+                <div class="auctions-toolbar">
+                    <div style="flex: 1; max-width: 420px;">
+                        <label class="form-label" for="auction-search" data-i18n="auction.searchAuctions">Search
+                            auctions</label>
+                        <input type="search" class="form-input search-input" id="auction-search"
+                            data-i18n-placeholder="auction.searchPlaceholder"
+                            placeholder="Search by title, category, location">
+                    </div>
+                    <div style="width: 100%; max-width: 280px;">
+                        <label class="form-label" for="category-filter" data-i18n="auction.filterByCategory">Filter by
+                            Category</label>
+                        <select class="form-select" id="category-filter">
+                            <option value="" data-i18n="categories.all">All Categories</option>
+                            <!-- Populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg" id="ongoing-auctions">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Past Auctions Section -->
+            <section class="section-spacing" id="past-section">
+                <div class="section-header">
+                    <h2 data-i18n="auction.past">Past Auctions</h2>
+                    <p class="text-graphite" data-i18n="auction.viewResults">View results from completed auctions</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg" id="past-auctions">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <ul class="footer-links">
+                        <li><a href="info/about.html">About Zauction</a></li>
+                        <li><a href="info/team.html">Our Team</a></li>
+                        <li><a href="info/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Bidding</h4>
+                    <ul class="footer-links">
+                        <li><a href="info/how-bidding-works.html">How Bidding Works</a></li>
+                        <li><a href="info/buyers-guide.html">Buyer's Guide</a></li>
+                        <li><a href="info/condition-reports.html">Condition Reports</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="info/fees-payments.html">Fees & Payments</a></li>
+                        <li><a href="info/shipping-pickup.html">Shipping & Pickup</a></li>
+                        <li><a href="info/authentication.html">Authentication</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="info/terms.html">Terms of Service</a></li>
+                        <li><a href="info/privacy.html">Privacy Policy</a></li>
+                        <li><a href="info/cookies.html">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Zauction. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/i18n.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/countdown.js"></script>
+    <script>
+        let selectedCategory = null;
+        let searchQuery = '';
+
+        // Render auction card
+        function renderAuctionCard(auction, isPast = false) {
+            const cardClass = isPast ? 'card card-archive' : (auction.featured ? 'card card-featured' : 'card');
+            const now = new Date();
+            const startDate = new Date(auction.start_date);
+            const hasNotStarted = startDate > now;
+            const startsSoon = hasNotStarted && (startDate.getTime() - now.getTime()) <= (48 * 60 * 60 * 1000);
+
+            const badge = isPast
+                ? '<span class="badge badge-ended">Ended</span>'
+                : hasNotStarted
+                    ? (startsSoon
+                        ? '<span class="badge badge-info">Starts Soon</span>'
+                        : '<span class="badge badge-info">Didn\'t Start</span>')
+                    : (isEndingSoon(auction.end_date) ? '<span class="badge badge-gold">Ending Soon</span>' : '');
+
+            const endDateText = isPast
+                ? `Ended ${formatDate(auction.end_date)}`
+                : hasNotStarted
+                    ? `Starts ${formatDate(auction.start_date)}`
+                    : `Ends ${formatDate(auction.end_date)}`;
+
+            const archiveParam = isPast ? '&archive=true' : '';
+
+            return `
+                <a href="auction.html?id=${auction.id}${archiveParam}" class="${cardClass}">
+                    <img src="${auction.image_data || auction.image_url || '../assets/images/placeholder.png'}" alt="${auction.title}" class="card-image">
+                    <div class="card-content">
+                        <div class="label mb-2">${auction.category || 'Auction'}</div>
+                        <h3 class="card-title">${auction.title}</h3>
+                        <p class="card-subtitle">${auction.lot_count || 0} lots • ${auction.location || 'TBA'}</p>
+                    </div>
+                    <div class="card-footer">
+                        <span class="text-sm text-muted">${endDateText}</span>
+                        ${badge}
+                    </div>
+                </a>
+            `;
+        }
+
+        // Load Featured Auctions from API
+        async function loadFeaturedAuctions() {
+            try {
+                // Get recently viewed/searched auctions from localStorage
+                const recentAuctionIds = JSON.parse(localStorage.getItem('recentAuctions') || '[]');
+                
+                // Get auctions with most bidders
+                const { auctions: mostBiddedAuctions } = await auctionsAPI.getAll({ featured: 'true' });
+                
+                const now = new Date();
+                const activeMostBiddedAuctions = mostBiddedAuctions.filter(a => new Date(a.end_date) > now);
+                
+                let featuredAuctions = [];
+                
+                // If user has recent searches/views, prioritize those
+                if (recentAuctionIds.length > 0) {
+                    const { auctions: allAuctions } = await auctionsAPI.getAll({});
+                    
+                    // Get recent auctions that are still active (not ended)
+                    const recentAuctions = allAuctions.filter(a => {
+                        const endDate = new Date(a.end_date);
+                        return recentAuctionIds.includes(a.id) && endDate > now;
+                    });
+                    
+                    // Combine: recent first, then most bidded (avoiding duplicates)
+                    featuredAuctions = recentAuctions;
+                    
+                    activeMostBiddedAuctions.forEach(auction => {
+                        if (!featuredAuctions.find(a => a.id === auction.id)) {
+                            featuredAuctions.push(auction);
+                        }
+                    });
+                    
+                    // Limit to 6 total
+                    featuredAuctions = featuredAuctions.slice(0, 6);
+                } else {
+                    // No recent activity, just show most bidded
+                    featuredAuctions = activeMostBiddedAuctions;
+                }
+                
+                const container = document.getElementById('featured-auctions');
+                const section = document.getElementById('featured-section');
+
+                if (featuredAuctions.length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                container.innerHTML = featuredAuctions.map(auction => renderAuctionCard(auction, false)).join('');
+            } catch (error) {
+                console.error('Failed to load featured auctions:', error);
+                document.getElementById('featured-section').style.display = 'none';
+            }
+        }
+        
+        // Track auction views for featured section
+        function trackAuctionView(auctionId) {
+            const recentAuctions = JSON.parse(localStorage.getItem('recentAuctions') || '[]');
+            
+            // Remove if already exists (to update position)
+            const filtered = recentAuctions.filter(id => id !== auctionId);
+            
+            // Add to beginning
+            filtered.unshift(auctionId);
+            
+            // Keep only last 5
+            const updated = filtered.slice(0, 5);
+            
+            localStorage.setItem('recentAuctions', JSON.stringify(updated));
+        }
+
+        // Load Ongoing Auctions from API
+        async function loadOngoingAuctions() {
+            try {
+                const filters = {};
+                if (selectedCategory) {
+                    filters.category = selectedCategory;
+                }
+
+                // Get all auctions, then filter for active and upcoming based on end_date
+                const { auctions: allAuctions } = await auctionsAPI.getAll(filters);
+                const now = new Date();
+                
+                // Filter auctions that haven't ended yet
+                const auctions = allAuctions.filter(a => {
+                    const endDate = new Date(a.end_date);
+                    return endDate > now; // Not ended yet = ongoing
+                });
+                
+                let filteredAuctions = auctions;
+
+                // Apply client-side search filter
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    filteredAuctions = auctions.filter(a =>
+                        a.title.toLowerCase().includes(q) ||
+                        (a.description && a.description.toLowerCase().includes(q)) ||
+                        (a.category && a.category.toLowerCase().includes(q)) ||
+                        (a.location && a.location.toLowerCase().includes(q))
+                    );
+                }
+
+                const container = document.getElementById('ongoing-auctions');
+
+                if (filteredAuctions.length === 0) {
+                    container.innerHTML = '<p class="text-center text-muted" style="grid-column: 1 / -1;">No ongoing auctions found</p>';
+                    return;
+                }
+
+                container.innerHTML = filteredAuctions.map(auction => renderAuctionCard(auction, false)).join('');
+            } catch (error) {
+                console.error('Failed to load ongoing auctions:', error);
+                document.getElementById('ongoing-auctions').innerHTML = 
+                    '<p class="text-center text-muted" style="grid-column: 1 / -1;">Failed to load auctions</p>';
+            }
+        }
+
+        // Load Past Auctions from API
+        async function loadPastAuctions() {
+            try {
+                // Get all auctions, then filter for ended ones based on end_date
+                const { auctions: allAuctions } = await auctionsAPI.getAll({});
+                const now = new Date();
+                
+                // Filter auctions that have already ended
+                const auctions = allAuctions.filter(a => {
+                    const endDate = new Date(a.end_date);
+                    return endDate < now; // Already ended = past
+                });
+                
+                const container = document.getElementById('past-auctions');
+                const section = document.getElementById('past-section');
+
+                if (auctions.length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                container.innerHTML = auctions.map(auction => renderAuctionCard(auction, true)).join('');
+            } catch (error) {
+                console.error('Failed to load past auctions:', error);
+                document.getElementById('past-section').style.display = 'none';
+            }
+        }
+
+        // Load category filter options from API
+        async function loadCategoryFilter() {
+            try {
+                const { auctions } = await auctionsAPI.getAll();
+                const categories = [...new Set(auctions.map(a => a.category).filter(Boolean))].sort();
+                const select = document.getElementById('category-filter');
+
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    select.appendChild(option);
+                });
+
+                select.addEventListener('change', (e) => {
+                    selectedCategory = e.target.value || null;
+                    loadOngoingAuctions();
+                });
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        // Initialize search input
+        function initSearch() {
+            const input = document.getElementById('auction-search');
+            if (!input) return;
+
+            // Pre-fill from URL if present
+            const existing = getUrlParameter('search');
+            if (existing) {
+                searchQuery = existing;
+                input.value = existing;
+            }
+
+            const handleSearchInput = debounce((event) => {
+                searchQuery = event.target.value.trim();
+
+                if (searchQuery) {
+                    setUrlParameter('search', searchQuery);
+                } else {
+                    removeUrlParameter('search');
+                }
+
+                loadOngoingAuctions();
+            }, 200);
+
+            input.addEventListener('input', handleSearchInput);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFeaturedAuctions();
+            loadCategoryFilter();
+            initSearch();
+
+            // If search param present on load, honor it
+            const initialSearch = getUrlParameter('search');
+            if (initialSearch) {
+                searchQuery = initialSearch;
+            }
+
+            loadOngoingAuctions();
+            loadPastAuctions();
+        });
+    </script>
+</body>
+
+</html>

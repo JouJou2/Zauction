@@ -1,0 +1,128 @@
+/* ============================================
+   ZAUCTION - LOT PAGE STYLES
+   Image gallery, bid interface, lot details
+   ============================================ */
+
+.lot-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-16);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Image Gallery */
+.lot-images {
+    position: sticky;
+    top: calc(var(--space-24) + 60px);
+    height: fit-content;
+}
+
+.main-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-parchment);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Lot Details */
+.lot-details {
+    min-width: 0;
+}
+
+.lot-title {
+    font-size: var(--text-4xl);
+    margin-bottom: 0;
+}
+
+.bid-section {
+    background-color: var(--color-parchment);
+    border: var(--border-thin) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    margin-bottom: var(--space-8);
+}
+
+.current-bid {
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: var(--border-thin) solid var(--color-border);
+}
+
+.current-bid .label {
+    display: block;
+    margin-bottom: var(--space-2);
+}
+
+.current-bid .price {
+    display: block;
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-2);
+}
+
+.countdown-section .label {
+    display: block;
+    margin-bottom: var(--space-3);
+}
+
+.info-section {
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-6);
+    border-bottom: var(--border-thin) solid var(--color-border-light);
+}
+
+.info-section:last-child {
+    border-bottom: none;
+}
+
+.info-section h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-3);
+}
+
+.info-section p {
+    color: var(--color-graphite);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+}
+
+/* Modal Enhancements */
+.bid-info {
+    background-color: var(--color-parchment);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+}
+
+.success-summary {
+    background-color: var(--color-parchment);
+    padding: var(--space-6);
+    border-radius: var(--radius-md);
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+    .lot-layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+    }
+
+    .lot-images {
+        position: static;
+    }
+
+    .lot-title {
+        font-size: var(--text-3xl);
+    }
+
+    .current-bid .price {
+        font-size: var(--text-3xl);
+    }
+}
