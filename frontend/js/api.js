@@ -520,7 +520,7 @@ function getSocketServerUrl() {
         const apiUrl = new URL(API_BASE_URL);
         return `${apiUrl.protocol}//${apiUrl.host}`;
     } catch {
-        return 'http://localhost:3000';
+        return 'https://zauction-production.up.railway.app';
     }
 }
 

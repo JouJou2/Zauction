@@ -310,6 +310,25 @@
     const suggestionsContainer = document.getElementById('search-suggestions');
     let searchTimeout;
 
+    function getSearchApiBaseUrl() {
+      const fromWindow = window.ZAUCTION_API_BASE_URL;
+      const fromStorage = localStorage.getItem('zauction_api_base_url');
+      const fromMeta = document.querySelector('meta[name="zauction-api-base-url"]')?.content;
+
+      const normalize = (value) => {
+        if (!value) return null;
+        const trimmed = value.trim().replace(/\/$/, '');
+        return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+      };
+
+      const isLocalHost = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+      const fallback = isLocalHost
+        ? 'http://localhost:3000/api'
+        : 'https://zauction-production.up.railway.app/api';
+
+      return normalize(fromWindow) || normalize(fromStorage) || normalize(fromMeta) || fallback;
+    }
+
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.trim();
       
@@ -322,7 +341,8 @@
 
       searchTimeout = setTimeout(async () => {
         try {
-          const response = await fetch(`http://localhost:3000/api/search?q=${encodeURIComponent(query)}`);
+          const searchApiBaseUrl = getSearchApiBaseUrl();
+          const response = await fetch(`${searchApiBaseUrl}/search?q=${encodeURIComponent(query)}`);
           const data = await response.json();
           
           displaySearchSuggestions(data.auctions || [], data.lots || []);
