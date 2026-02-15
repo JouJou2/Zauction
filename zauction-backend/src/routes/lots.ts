@@ -3,6 +3,12 @@ import { pool } from '../config/database';
 
 const router = Router();
 
+function isOptionalMediaSchemaError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') return false;
+    const code = (error as { code?: string }).code;
+    return code === '42703' || code === '42P01';
+}
+
 // Get all lots (public)
 router.get('/', async (req, res) => {
     try {
@@ -38,7 +44,25 @@ router.get('/', async (req, res) => {
 
         query += ' ORDER BY l.created_at DESC';
 
-        const result = await pool.query(query, params);
+        let result;
+        try {
+            result = await pool.query(query, params);
+        } catch (error) {
+            if (!isOptionalMediaSchemaError(error)) {
+                throw error;
+            }
+
+            const fallbackQuery = query
+                .replace('(SELECT COUNT(*) FROM lot_media WHERE lot_id = l.id) as media_count,', '0 as media_count,')
+                                .replace('a.image_data as auction_image,', 'NULL::text as auction_image,')
+                                .replace(`COALESCE(
+                  (SELECT url FROM lot_media WHERE lot_id = l.id ORDER BY display_order LIMIT 1),
+                  l.image_data
+                ) as primary_image`, 'l.image_data as primary_image');
+
+            result = await pool.query(fallbackQuery, params);
+        }
+
         res.json({ lots: result.rows });
     } catch (error) {
         console.error('Get lots error:', error);
@@ -52,16 +76,34 @@ router.get('/:id', async (req, res) => {
         const { id } = req.params;
 
         // Get lot with auction info
-        const lotResult = await pool.query(
-            `SELECT l.*, a.title as auction_title, a.end_date, a.end_date as auction_end_date,
+        let lotResult;
+        try {
+            lotResult = await pool.query(
+                `SELECT l.*, a.title as auction_title, a.end_date, a.end_date as auction_end_date,
         a.buyers_premium, a.status as auction_status, a.image_data as auction_image,
         (SELECT COUNT(*) FROM bids WHERE lot_id = l.id) as bid_count,
         (SELECT MAX(amount) FROM bids WHERE lot_id = l.id) as current_bid
        FROM lots l
        JOIN auctions a ON l.auction_id = a.id
        WHERE l.id = $1`,
-            [id]
-        );
+                [id]
+            );
+        } catch (error) {
+            if (!isOptionalMediaSchemaError(error)) {
+                throw error;
+            }
+
+            lotResult = await pool.query(
+                `SELECT l.*, a.title as auction_title, a.end_date, a.end_date as auction_end_date,
+        COALESCE(a.buyers_premium, 25) as buyers_premium, a.status as auction_status, NULL::text as auction_image,
+        (SELECT COUNT(*) FROM bids WHERE lot_id = l.id) as bid_count,
+        (SELECT MAX(amount) FROM bids WHERE lot_id = l.id) as current_bid
+       FROM lots l
+       JOIN auctions a ON l.auction_id = a.id
+       WHERE l.id = $1`,
+                [id]
+            );
+        }
 
         if (lotResult.rows.length === 0) {
             return res.status(404).json({ error: 'Lot not found' });
@@ -70,12 +112,18 @@ router.get('/:id', async (req, res) => {
         const lot = lotResult.rows[0];
 
         // Get media
-        const mediaResult = await pool.query(
-            'SELECT * FROM lot_media WHERE lot_id = $1 ORDER BY display_order',
-            [id]
-        );
-
-        lot.media = mediaResult.rows;
+        try {
+            const mediaResult = await pool.query(
+                'SELECT * FROM lot_media WHERE lot_id = $1 ORDER BY display_order',
+                [id]
+            );
+            lot.media = mediaResult.rows;
+        } catch (error) {
+            if (!isOptionalMediaSchemaError(error)) {
+                throw error;
+            }
+            lot.media = [];
+        }
 
         res.json({ lot });
     } catch (error) {
