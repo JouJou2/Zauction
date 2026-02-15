@@ -15,6 +15,7 @@ import watchlistRoutes from './routes/watchlist';
 import searchRoutes from './routes/search';
 import { initializeSocketHandlers } from './socket/handlers';
 import { startLiveAuctionNotifier } from './services/liveAuctionNotifier';
+import { ensureAdminUser } from './services/adminBootstrap';
 
 // Load environment variables
 dotenv.config();
@@ -96,13 +97,23 @@ initializeSocketHandlers(io);
 startLiveAuctionNotifier();
 
 // Start server
-httpServer.listen(PORT, () => {
-    console.log(`🚀 Zauction Backend Server running on port ${PORT}`);
-    console.log(`📡 WebSocket server ready for live bidding`);
-    console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🌐 API: http://localhost:${PORT}/api`);
-    console.log(`💚 Health: http://localhost:${PORT}/health`);
-});
+async function startServer() {
+    try {
+        await ensureAdminUser();
+    } catch (error) {
+        console.error('⚠️ Admin bootstrap failed:', error);
+    }
+
+    httpServer.listen(PORT, () => {
+        console.log(`🚀 Zauction Backend Server running on port ${PORT}`);
+        console.log(`📡 WebSocket server ready for live bidding`);
+        console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`🌐 API: http://localhost:${PORT}/api`);
+        console.log(`💚 Health: http://localhost:${PORT}/health`);
+    });
+}
+
+void startServer();
 
 export { io };
 export default app;

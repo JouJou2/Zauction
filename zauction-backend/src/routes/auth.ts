@@ -241,13 +241,13 @@ router.post('/register/request-otp',
                 .filter((result): result is PromiseFulfilledResult<{ channel: string }> => result.status === 'fulfilled')
                 .map((result) => result.value.channel);
 
-            if (successfulChannels.length === 0) {
-                throw new Error(`Failed to deliver OTP through configured channels: ${failedDeliveries.join(' | ') || 'Unknown delivery error'}`);
-            }
-
             const failedDeliveries = deliveryResults
                 .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
                 .map((result) => result.reason?.message || 'Unknown delivery error');
+
+            if (successfulChannels.length === 0) {
+                throw new Error(`Failed to deliver OTP through configured channels: ${failedDeliveries.join(' | ') || 'Unknown delivery error'}`);
+            }
 
             res.json({
                 message: `OTP sent via ${successfulChannels.join(' and ')}. It expires in 10 minutes.`,
