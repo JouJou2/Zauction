@@ -210,7 +210,7 @@
                 const countdownHtml = isClosed ? '' : '<span class="text-xs font-medium" data-countdown="' + lot.end_date + '" data-compact></span>';
 
                 const card = document.createElement('a');
-                card.href = 'lot.html?id=' + lot.id + (isClosed ? '&archive=true' : '');
+                card.href = 'lot.html?id=' + lot.id + '&v=20260215' + (isClosed ? '&archive=true' : '');
                 card.className = cardClass;
                 card.innerHTML = 
                     '<div class="relative">' +

@@ -143,8 +143,9 @@
 
                 container.innerHTML = watchlist.map(item => {
                     const lotId = item.lot_id;
+                    const auctionQuery = item.auction_id ? `&auction_id=${item.auction_id}` : '';
                     return `
-            <a href="lot.html?id=${lotId}" class="card">
+            <a href="lot.html?id=${lotId}${auctionQuery}&v=20260215" class="card">
               <img src="${item.primary_image || '../assets/images/placeholder.png'}" alt="${item.title}" class="card-image">
               <div class="card-content">
                 <div class="label mb-2">${i18n.t('auction.lot')} ${item.lot_number}</div>
@@ -232,7 +233,7 @@
                 
                 return `
                     <tr>
-                        <td><a href="lot.html?id=${bid.lot_id}" class="text-gold">${bid.lot_title || i18n.t('account.unknownLot')}</a></td>
+                        <td><a href="lot.html?id=${bid.lot_id}&auction_id=${bid.auction_id}&v=20260215" class="text-gold">${bid.lot_title || i18n.t('account.unknownLot')}</a></td>
                         <td><a href="auction.html?id=${bid.auction_id}" class="text-sm text-muted">${bid.auction_title || 'Auction'}</a></td>
                         <td>${formatCurrency(bid.amount)}</td>
                         <td>${formatCurrency(liveCurrentBid)}</td>

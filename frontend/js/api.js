@@ -610,7 +610,7 @@ const bidStatusWidget = {
 
     getLotHref(lotId) {
         const inPagesDir = window.location.pathname.includes('/pages/');
-        return `${inPagesDir ? '' : 'pages/'}lot.html?id=${lotId}`;
+        return `${inPagesDir ? '' : 'pages/'}lot.html?id=${lotId}&v=20260215`;
     },
 
     shouldShow() {

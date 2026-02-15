@@ -13,7 +13,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
         const user_id = req.user!.id;
 
         const result = await pool.query(
-            `SELECT w.*, l.title, l.lot_number, l.current_bid, l.starting_bid, l.image_data,
+            `SELECT w.*, l.title, l.lot_number, l.auction_id, l.current_bid, l.starting_bid, l.image_data,
         a.title as auction_title, a.end_date as auction_end_date,
                 l.image_data as primary_image
        FROM watchlist w
