@@ -7,13 +7,30 @@ function normalizeApiBaseUrl(baseUrl) {
 }
 
 function resolveApiBaseUrl() {
+    let fromQuery = null;
+
+    if (typeof window !== 'undefined') {
+        try {
+            const queryApiBase = new URLSearchParams(window.location.search).get('api_base');
+            const normalizedQueryApiBase = normalizeApiBaseUrl(queryApiBase);
+
+            if (normalizedQueryApiBase) {
+                localStorage.setItem('zauction_api_base_url', normalizedQueryApiBase);
+                fromQuery = normalizedQueryApiBase;
+            }
+        } catch {
+            fromQuery = null;
+        }
+    }
+
     const fromWindow = typeof window !== 'undefined' ? window.ZAUCTION_API_BASE_URL : null;
     const fromStorage = typeof localStorage !== 'undefined' ? localStorage.getItem('zauction_api_base_url') : null;
     const fromMeta = typeof document !== 'undefined'
         ? document.querySelector('meta[name="zauction-api-base-url"]')?.content
         : null;
 
-    return normalizeApiBaseUrl(fromWindow)
+    return fromQuery
+        || normalizeApiBaseUrl(fromWindow)
         || normalizeApiBaseUrl(fromStorage)
         || normalizeApiBaseUrl(fromMeta)
         || 'http://localhost:3000/api';
