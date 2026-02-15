@@ -36,9 +36,28 @@ function resolveApiBaseUrl() {
         ? 'http://localhost:3000/api'
         : 'https://zauction-production.up.railway.app/api';
 
+    const sanitizedStorageBaseUrl = (() => {
+        const normalizedStorage = normalizeApiBaseUrl(fromStorage);
+        if (!normalizedStorage) return null;
+
+        try {
+            const parsed = new URL(normalizedStorage);
+            const isStoredLocalHost = ['localhost', '127.0.0.1', '::1'].includes(parsed.hostname);
+
+            if (!isLocalHost && isStoredLocalHost) {
+                localStorage.removeItem('zauction_api_base_url');
+                return null;
+            }
+        } catch {
+            return null;
+        }
+
+        return normalizedStorage;
+    })();
+
     return fromQuery
         || normalizeApiBaseUrl(fromWindow)
-        || normalizeApiBaseUrl(fromStorage)
+        || sanitizedStorageBaseUrl
         || normalizeApiBaseUrl(fromMeta)
         || defaultApiBaseUrl;
 }
