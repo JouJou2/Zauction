@@ -268,14 +268,33 @@
                 const normalizedPhone = validateRegistrationInput(full_name, email, countryCode, phoneLocal, password, confirmPassword);
 
                 if (!otpRequested) {
-                    await authAPI.requestRegistrationOtp(email, password, confirmPassword, full_name, normalizedPhone);
-                    otpRequested = true;
-                    setRegistrationFieldsDisabled(true);
-                    otpGroup.style.display = 'block';
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Verify OTP & Create Account';
-                    alert('Verification code sent. Enter the 6-digit code to complete registration.');
-                    return;
+                    try {
+                        await authAPI.requestRegistrationOtp(email, password, confirmPassword, full_name, normalizedPhone);
+                        otpRequested = true;
+                        setRegistrationFieldsDisabled(true);
+                        otpGroup.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Verify OTP & Create Account';
+                        alert('Verification code sent. Enter the 6-digit code to complete registration.');
+                        return;
+                    } catch (otpError) {
+                        const otpErrorMessage = otpError?.message || '';
+                        const canFallbackToDirectRegister = /Failed to deliver OTP|No OTP delivery channel|timed out/i.test(otpErrorMessage);
+
+                        if (!canFallbackToDirectRegister) {
+                            throw otpError;
+                        }
+
+                        const result = await authAPI.register(email, password, confirmPassword, full_name, normalizedPhone);
+                        alert('OTP delivery is currently unavailable. Account created successfully and pending admin approval.');
+
+                        if (result?.user?.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'account.html';
+                        }
+                        return;
+                    }
                 }
 
                 if (!otpCode || otpCode.length !== 6) {
