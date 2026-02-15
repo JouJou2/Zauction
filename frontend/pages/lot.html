@@ -310,10 +310,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!lotId) {
-                const fallbackHref = auctionIdParam
-                    ? `auction.html?id=${auctionIdParam}`
-                    : 'auctions.html';
-                window.location.href = fallbackHref;
+                document.getElementById('lot-content').innerHTML =
+                    '<div class="lot-details"><h2>Lot not found</h2><p class="text-muted">Invalid lot link.</p><p><a class="text-gold" href="auctions.html">Go back</a></p></div>';
                 return;
             }
 
