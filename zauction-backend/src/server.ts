@@ -19,11 +19,22 @@ import { startLiveAuctionNotifier } from './services/liveAuctionNotifier';
 // Load environment variables
 dotenv.config();
 
+const defaultAllowedOrigins = ['http://localhost:8000', 'http://127.0.0.1:8000'];
+
+const allowedOrigins = (process.env.FRONTEND_URL || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+if (allowedOrigins.length === 0) {
+    allowedOrigins.push(...defaultAllowedOrigins);
+}
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors: {
-        origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+        origin: allowedOrigins,
         methods: ['GET', 'POST'],
         credentials: true
     }
@@ -33,7 +44,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:8000', 'http://127.0.0.1:8000'],
+    origin: allowedOrigins,
     credentials: true
 }));
 app.use(express.json());

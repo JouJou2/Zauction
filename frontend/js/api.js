@@ -1,5 +1,25 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:3000/api';
+function normalizeApiBaseUrl(baseUrl) {
+    if (!baseUrl) return null;
+
+    const normalized = baseUrl.trim().replace(/\/$/, '');
+    return normalized.endsWith('/api') ? normalized : `${normalized}/api`;
+}
+
+function resolveApiBaseUrl() {
+    const fromWindow = typeof window !== 'undefined' ? window.ZAUCTION_API_BASE_URL : null;
+    const fromStorage = typeof localStorage !== 'undefined' ? localStorage.getItem('zauction_api_base_url') : null;
+    const fromMeta = typeof document !== 'undefined'
+        ? document.querySelector('meta[name="zauction-api-base-url"]')?.content
+        : null;
+
+    return normalizeApiBaseUrl(fromWindow)
+        || normalizeApiBaseUrl(fromStorage)
+        || normalizeApiBaseUrl(fromMeta)
+        || 'http://localhost:3000/api';
+}
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 // Get token from localStorage
 function getToken() {
