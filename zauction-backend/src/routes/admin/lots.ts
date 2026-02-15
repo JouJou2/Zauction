@@ -6,6 +6,15 @@ import { pool } from '../../config/database';
 import { authenticate, requireAdmin, AuthRequest } from '../../middleware/auth';
 
 const router = Router();
+let lotMediaColumnsEnsured = false;
+
+async function ensureLotMediaColumnsAreText() {
+    if (lotMediaColumnsEnsured) return;
+
+    await pool.query('ALTER TABLE lot_media ALTER COLUMN url TYPE TEXT');
+    await pool.query('ALTER TABLE lot_media ALTER COLUMN thumbnail_url TYPE TEXT');
+    lotMediaColumnsEnsured = true;
+}
 
 // Configure Cloudinary
 cloudinary.config({
@@ -195,12 +204,35 @@ router.post('/:id/media', upload.single('file'), async (req: AuthRequest, res: R
         const display_order = orderResult.rows[0].next_order;
 
         // Save to database as base64
-        const result = await pool.query(
-            `INSERT INTO lot_media (id, lot_id, media_type, url, thumbnail_url, display_order)
+        let result;
+        try {
+            result = await pool.query(
+                `INSERT INTO lot_media (id, lot_id, media_type, url, thumbnail_url, display_order)
        VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)
        RETURNING *`,
-            [id, media_type, dataUrl, thumbnailUrl, display_order]
-        );
+                [id, media_type, dataUrl, thumbnailUrl, display_order]
+            );
+        } catch (error: any) {
+            if (error?.code !== '22001') {
+                throw error;
+            }
+
+            await ensureLotMediaColumnsAreText();
+            result = await pool.query(
+                `INSERT INTO lot_media (id, lot_id, media_type, url, thumbnail_url, display_order)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)
+       RETURNING *`,
+                [id, media_type, dataUrl, thumbnailUrl, display_order]
+            );
+        }
+
+        // Keep first uploaded image as fallback cover for list/detail pages
+        if (media_type === 'image' && display_order === 0) {
+            await pool.query(
+                'UPDATE lots SET image_data = COALESCE(image_data, $1), updated_at = NOW() WHERE id = $2',
+                [dataUrl, id]
+            );
+        }
 
         res.status(201).json({
             message: 'Media uploaded successfully',

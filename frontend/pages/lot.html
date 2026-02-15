@@ -152,6 +152,7 @@
     <script src="../js/bidding.js"></script>
     <script>
         const lotId = getUrlParameter('id');
+        const auctionIdParam = getUrlParameter('auction_id');
 
         function refreshLotData() {
             loadLot();
@@ -162,7 +163,11 @@
                 const { lot } = await lotsAPI.getById(lotId);
                 
                 if (!lot) {
-                    window.location.href = 'auctions.html';
+                    const fallbackHref = auctionIdParam
+                        ? `auction.html?id=${auctionIdParam}`
+                        : 'auctions.html';
+                    document.getElementById('lot-content').innerHTML =
+                        `<div class="lot-details"><h2>Lot not found</h2><p class="text-muted">This lot may have been removed.</p><p><a class="text-gold" href="${fallbackHref}">Go back</a></p></div>`;
                     return;
                 }
 
@@ -250,8 +255,8 @@
                 }
             } catch (error) {
                 console.error('Failed to load lot:', error);
-                alert('Failed to load lot details');
-                window.location.href = 'auctions.html';
+                document.getElementById('lot-content').innerHTML =
+                    '<div class="lot-details"><h2>Failed to load lot</h2><p class="text-muted">Please refresh and try again.</p></div>';
             }
         }
 
@@ -305,7 +310,10 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             if (!lotId) {
-                window.location.href = 'auctions.html';
+                const fallbackHref = auctionIdParam
+                    ? `auction.html?id=${auctionIdParam}`
+                    : 'auctions.html';
+                window.location.href = fallbackHref;
                 return;
             }
 

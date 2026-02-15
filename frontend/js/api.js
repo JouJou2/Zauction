@@ -263,7 +263,7 @@ const lotsAPI = {
     },
 
     async getById(id) {
-        return apiRequest(`/lots/${id}`);
+        return apiRequest(`/lots/${id}`, { timeoutMs: 30000 });
     },
 
     async getBids(lotId, limit = 10) {
