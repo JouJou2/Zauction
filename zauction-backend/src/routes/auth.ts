@@ -90,6 +90,24 @@ function generateOtp() {
     return randomInt(100000, 999999).toString();
 }
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            reject(new Error(`${label} timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+
+        promise
+            .then((result) => {
+                clearTimeout(timeoutId);
+                resolve(result);
+            })
+            .catch((error) => {
+                clearTimeout(timeoutId);
+                reject(error);
+            });
+    });
+}
+
 function isOtpRequired() {
     return process.env.EMAIL_OTP_REQUIRED === 'true';
 }
@@ -106,13 +124,18 @@ async function sendOtpViaWhatsApp(phoneNumber: string, otp: string) {
         throw new Error('Phone number is invalid for WhatsApp delivery');
     }
 
+    const controller = new AbortController();
+    const timeoutMs = parseInt(process.env.WHATSAPP_OTP_TIMEOUT_MS || '10000', 10);
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     const response = await fetch(`${bridgeUrl}/api/auth/send-otp-direct`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ phoneNumber: digitsOnlyPhone, otp })
-    });
+        body: JSON.stringify({ phoneNumber: digitsOnlyPhone, otp }),
+        signal: controller.signal
+    }).finally(() => clearTimeout(timeoutId));
 
     if (!response.ok) {
         let message = `WhatsApp OTP request failed (${response.status})`;
@@ -199,13 +222,13 @@ router.post('/register/request-otp',
 
             if (hasEmailOtpChannelConfigured()) {
                 deliveryPromises.push(
-                    sendOtpEmail(email, otp).then(() => ({ channel: 'email' }))
+                    withTimeout(sendOtpEmail(email, otp), 15000, 'Email OTP delivery').then(() => ({ channel: 'email' }))
                 );
             }
 
             if (isWhatsAppOtpEnabled()) {
                 deliveryPromises.push(
-                    sendOtpViaWhatsApp(normalizedPhone, otp).then(() => ({ channel: 'whatsapp' }))
+                    withTimeout(sendOtpViaWhatsApp(normalizedPhone, otp), 12000, 'WhatsApp OTP delivery').then(() => ({ channel: 'whatsapp' }))
                 );
             }
 
@@ -219,7 +242,7 @@ router.post('/register/request-otp',
                 .map((result) => result.value.channel);
 
             if (successfulChannels.length === 0) {
-                throw new Error('Failed to deliver OTP through configured channels');
+                throw new Error(`Failed to deliver OTP through configured channels: ${failedDeliveries.join(' | ') || 'Unknown delivery error'}`);
             }
 
             const failedDeliveries = deliveryResults

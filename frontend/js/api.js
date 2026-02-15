@@ -99,30 +99,51 @@ function clearAuth() {
 
 // Make authenticated API request
 async function apiRequest(endpoint, options = {}) {
+    const { timeoutMs: requestedTimeoutMs, ...fetchOptions } = options;
     const token = getToken();
     const headers = {
         'Content-Type': 'application/json',
         ...options.headers
     };
 
+    const controller = new AbortController();
+    const timeoutMs = typeof requestedTimeoutMs === 'number' ? requestedTimeoutMs : 15000;
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers
-    });
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...fetchOptions,
+            headers,
+            signal: controller.signal
+        });
 
-    const data = await response.json();
+        const contentType = response.headers.get('content-type') || '';
+        const data = contentType.includes('application/json')
+            ? await response.json()
+            : await response.text();
 
-    if (!response.ok) {
-        const error = new Error(data.error || 'Request failed');
-        error.response = data;
+        if (!response.ok) {
+            const errorMessage = typeof data === 'string'
+                ? data
+                : (data?.error || data?.message || 'Request failed');
+            const error = new Error(errorMessage);
+            error.response = data;
+            throw error;
+        }
+
+        return data;
+    } catch (error) {
+        if (error?.name === 'AbortError') {
+            throw new Error('Request timed out. Please try again.');
+        }
         throw error;
+    } finally {
+        clearTimeout(timeoutId);
     }
-
-    return data;
 }
 
 // Auth API
