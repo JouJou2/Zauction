@@ -29,11 +29,18 @@ function resolveApiBaseUrl() {
         ? document.querySelector('meta[name="zauction-api-base-url"]')?.content
         : null;
 
+    const isLocalHost = typeof window !== 'undefined'
+        && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+    const defaultApiBaseUrl = isLocalHost
+        ? 'http://localhost:3000/api'
+        : 'https://zauction-production.up.railway.app/api';
+
     return fromQuery
         || normalizeApiBaseUrl(fromWindow)
         || normalizeApiBaseUrl(fromStorage)
         || normalizeApiBaseUrl(fromMeta)
-        || 'http://localhost:3000/api';
+        || defaultApiBaseUrl;
 }
 
 const API_BASE_URL = resolveApiBaseUrl();
