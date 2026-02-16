@@ -2,11 +2,12 @@ import { Router, Response } from 'express';
 import { pool } from '../config/database';
 
 const router = Router();
+const VALID_LOT_STATUSES = new Set(['active', 'sold', 'unsold', 'withdrawn']);
 
 function isOptionalMediaSchemaError(error: unknown): boolean {
     if (!error || typeof error !== 'object') return false;
     const code = (error as { code?: string }).code;
-    return code === '42703' || code === '42P01';
+    return code === '42703' || code === '42P01' || code === '42704';
 }
 
 // Get all lots (public)
@@ -14,54 +15,35 @@ router.get('/', async (req, res) => {
     try {
         const { category, status, auction_id } = req.query;
 
-        let query = `
-            SELECT l.*, a.title as auction_title, a.end_date, a.image_data as auction_image,
-                (SELECT COUNT(*) FROM lot_media WHERE lot_id = l.id) as media_count,
-                COALESCE(
-                  (SELECT url FROM lot_media WHERE lot_id = l.id ORDER BY display_order LIMIT 1),
-                  l.image_data
-                ) as primary_image
+        const params: any[] = [];
+        let whereClause = ' WHERE 1=1';
+
+        if (typeof category === 'string' && category.trim().length > 0) {
+            params.push(category);
+            whereClause += ` AND l.category = $${params.length}`;
+        }
+
+        if (typeof status === 'string' && VALID_LOT_STATUSES.has(status.toLowerCase())) {
+            params.push(status.toLowerCase());
+            whereClause += ` AND l.status = $${params.length}`;
+        }
+
+        if (typeof auction_id === 'string' && auction_id.trim().length > 0) {
+            params.push(auction_id);
+            whereClause += ` AND l.auction_id = $${params.length}`;
+        }
+
+        const result = await pool.query(
+            `SELECT l.*, a.title as auction_title, a.end_date,
+                NULL::text as auction_image,
+                0 as media_count,
+                NULL::text as primary_image
             FROM lots l
             JOIN auctions a ON l.auction_id = a.id
-            WHERE 1=1
-        `;
-        const params: any[] = [];
-
-        if (category) {
-            params.push(category);
-            query += ` AND l.category = $${params.length}`;
-        }
-
-        if (status) {
-            params.push(status);
-            query += ` AND l.status = $${params.length}`;
-        }
-
-        if (auction_id) {
-            params.push(auction_id);
-            query += ` AND l.auction_id = $${params.length}`;
-        }
-
-        query += ' ORDER BY l.created_at DESC';
-
-        let result;
-        try {
-            result = await pool.query(query, params);
-        } catch (error) {
-            if (!isOptionalMediaSchemaError(error)) {
-                throw error;
-            }
-
-            const fallbackQuery = query
-                .replace('(SELECT COUNT(*) FROM lot_media WHERE lot_id = l.id) as media_count,', '0 as media_count,')
-                                .replace('a.image_data as auction_image,', 'NULL::text as auction_image,')
-                                .replace(`COALESCE(
-                  (SELECT url FROM lot_media WHERE lot_id = l.id ORDER BY display_order LIMIT 1),
-                  l.image_data
-                ) as primary_image`, 'l.image_data as primary_image');
-
-            result = await pool.query(fallbackQuery, params);
-        }
+            ${whereClause}
+            ORDER BY a.end_date DESC, l.lot_number ASC`,
+            params
+        );
 
         res.json({ lots: result.rows });
     } catch (error) {

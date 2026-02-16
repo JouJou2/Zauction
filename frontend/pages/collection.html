@@ -99,15 +99,44 @@
             category: ''
         };
 
+        async function loadLotsViaAuctionsFallback(auctions) {
+            const lotsByAuction = await Promise.all(
+                auctions.map(async (auction) => {
+                    try {
+                        const response = await auctionsAPI.getLots(auction.id);
+                        const lots = response?.lots || [];
+                        return lots.map(lot => ({
+                            ...lot,
+                            auction_title: lot.auction_title || auction.title,
+                            end_date: lot.end_date || auction.end_date,
+                            auction_id: lot.auction_id || auction.id,
+                            auction_image: lot.auction_image || auction.image_data || auction.image_url || null,
+                            primary_image: lot.primary_image || lot.image_data || auction.image_data || auction.image_url || null
+                        }));
+                    } catch (fallbackError) {
+                        console.error('Fallback lots load failed for auction:', auction.id, fallbackError);
+                        return [];
+                    }
+                })
+            );
+
+            return lotsByAuction.flat();
+        }
+
         async function initCollection() {
             try {
-                // Fetch all lots from API
-                const lotsResponse = await lotsAPI.getAll();
-                allLots = lotsResponse.lots || [];
-
                 // Fetch all auctions for filter dropdown
                 const auctionsResponse = await auctionsAPI.getAll();
                 allAuctions = auctionsResponse.auctions || [];
+
+                try {
+                    // Primary source: dedicated lots endpoint
+                    const lotsResponse = await lotsAPI.getAll();
+                    allLots = lotsResponse.lots || [];
+                } catch (lotsError) {
+                    console.warn('Primary /lots endpoint failed, using auctions fallback:', lotsError);
+                    allLots = await loadLotsViaAuctionsFallback(allAuctions);
+                }
 
                 populateFilters();
                 applyFilters();
@@ -210,7 +239,7 @@
                 const countdownHtml = isClosed ? '' : '<span class="text-xs font-medium" data-countdown="' + lot.end_date + '" data-compact></span>';
 
                 const card = document.createElement('a');
-                card.href = 'lot.html?id=' + lot.id + '&v=20260215' + (isClosed ? '&archive=true' : '');
+                card.href = 'lot.html?id=' + lot.id + '&auction_id=' + (lot.auction_id || '') + '&v=20260215' + (isClosed ? '&archive=true' : '');
                 card.className = cardClass;
                 card.innerHTML = 
                     '<div class="relative">' +
